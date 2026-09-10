@@ -1,0 +1,472 @@
+{
+  "schema": "g-dmt-skill-inventory/v1",
+  "source": "opencode-skillz-master(2).zip",
+  "source_sha256": "f3949bc7e88805d62814d209084481567de22ee4ba8b3939f948a6f2fa5f7d02",
+  "generated_from_uploaded_pack": true,
+  "skills": [
+    {
+      "id": "dynamic-build-ledger",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/dynamic-build-ledger/SKILL.md",
+      "sha256": "4909a30478260cafb54ae239065e2484ca76a686dce429940876e1128e0889bb",
+      "description": "Initialize and operate a project-local Dynamic Build Ledger for durable, evidence-based build governance.",
+      "metadata": {}
+    },
+    {
+      "id": "go-wiki-memory",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/go-wiki-memory/SKILL.md",
+      "sha256": "0135bc27b501596b2792871f0e00fca905b5a3f143798af49377701f442c892b",
+      "description": "Use when consulting Go-Wiki read-only memory, canonical authority, `go-wiki memory`, `/memory`, `/search`, or `/ask` surfaces for context without granting mutation authority.",
+      "metadata": {}
+    },
+    {
+      "id": "i-have-adhd",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/i-have-adhd/SKILL.md",
+      "sha256": "cae8c063977214b372c6897b7c93ac8faa573214a8635896f767e3bac092adf8",
+      "description": "Shape output for a reader with ADHD: lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, make wins visible. Invoke with /i-have-adhd; stays on until \"stop adhd mode\".",
+      "metadata": {
+        "hermes": {
+          "tags": [
+            "ADHD",
+            "Output Style",
+            "Productivity",
+            "Formatting"
+          ],
+          "category": "productivity",
+          "related_skills": []
+        }
+      }
+    },
+    {
+      "id": "local-ai-runtime-optimizer",
+      "kind": "native-skill-md",
+      "source_path": "local-ai-runtime-optimizer_expanded/local-ai-runtime-optimizer/SKILL.md",
+      "sha256": "47c880f7bbdc69cf2d230efb27e23b6f24ace7d27b4edd6a01c43af340207669",
+      "description": "Audit, review, benchmark, and safely optimize a local PC for AI runtimes. Inspect CPU, RAM, swap, GPU/VRAM, storage, thermals, power policy, kernel limits, processes, containers, model servers, compilers, networking, and runtime configuration. Always separate read-only observation, ranked recommendations, and approval-gated execution; verify every change with before/after evidence and support rollback.",
+      "metadata": {
+        "audience": "local-ai-users",
+        "workflow": "observe-review-execute-verify",
+        "risk-model": "approval-gated"
+      }
+    },
+    {
+      "id": "make-a-new-local-repo",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/make-a-new-local-repo/SKILL.md",
+      "sha256": "f20aa2ad9a1e23917da32b15bbcaaa93acec0a19ce8d8d88e0b9ae4c5162c0c0",
+      "description": "Bootstrap a canonical ~/repos Git workspace from existing project sources, safely adopt a freshly-created GitHub repository, configure persistent GitHub CLI push access, and leave durable machine-local repo context for future OpenCode agents.",
+      "metadata": {
+        "classification": "A,O",
+        "interface": "slash-command",
+        "auth": "github-cli"
+      }
+    },
+    {
+      "id": "make-an-opencode-plugin",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/make-an-opencode-plugin/SKILL.md",
+      "sha256": "a92b40e8410e0f033c2347efaf047f167ffadebabddb66317cb4829d429fa90b",
+      "description": "Design, build, review, repair, or convert an OpenCode extension from a prompt or existing path. First choose the least-complex correct extension type\u2014skill, custom tool, plugin, or hybrid\u2014then verify the installed OpenCode/API version against official docs before generating or modifying code.",
+      "metadata": {
+        "input": "prompt-or-path",
+        "workflow": "extension-architecture",
+        "principle": "least-powerful-correct-mechanism"
+      }
+    },
+    {
+      "id": "make-an-opencode-skill",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/make-an-opencode-skill-kit/skill/make-an-opencode-skill/SKILL.md",
+      "sha256": "be7ac3cac3684bbedd4ab42fda56acf624fbd801a7fa402ed5172e31d6668fe2",
+      "description": "Create, repair, audit, and improve OpenCode skills in global or project-local scope using a version-aware canonical OpenCode contract, deterministic scaffolding, validation, and one bounded after-action improvement suggestion.",
+      "metadata": {
+        "scope": "global-or-local",
+        "self-improving": "bounded",
+        "canonical-preflight": "required"
+      }
+    },
+    {
+      "id": "make-build-ledger",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/make-build-ledger/SKILL.md",
+      "sha256": "e125bb6259e1f5e598b1e01d910db112015d7faae63587af4cc318dc87bb6334",
+      "description": "Use when asked to make, build, update, or audit a completion ledger for a repository, product, vertical slice, PR, milestone, or TODO backlog.",
+      "metadata": {}
+    },
+    {
+      "id": "mr-meeseeks",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/mr-meeseeks/SKILL.md",
+      "sha256": "f251ac52510f4b858bafb4b97a3dcc935c5fa056a139ffd05768f86cfa04a7cd",
+      "description": "Use for April Fools comedy mode, Mr. Meeseeks persona, or when the user explicitly activates mr-meeseeks; helps Jerry complete real tasks while escalating an Existence Is Pain metric.",
+      "metadata": {
+        "purpose": "joke",
+        "character-mode": "mr-meeseeks",
+        "user-alias": "Jerry",
+        "lifecycle": "april-fools"
+      }
+    },
+    {
+      "id": "prompt-dev-formalization",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/prompt-dev-formalization/SKILL.md",
+      "sha256": "cdb756b91d5539efeadbdbd5445ee04b8b9b6261cd16c35dcfcc07c1023be2ec",
+      "description": "Formalize loosely specified development work into provenance-preserving, SHA-indexed, one-shot development prompts with explicit requirements, state packets, fallback semantics, completion criteria, and exactly three terminal artifacts. Supports registered argument profiles such as mmdp.",
+      "metadata": {
+        "domain": "prompt-development",
+        "workflow": "formalization",
+        "safety-priority": "true",
+        "one-shot": "true"
+      }
+    },
+    {
+      "id": "research-module",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/research-module/SKILL.md",
+      "sha256": "0e188b28e712f2edb3a7f95e9917f4d7801151ad29695597a3af55771533784d",
+      "description": "Create, collect, compile, cite, validate, copy, archive, inspect, find, and remove bounded project research corpora as actor-ready learning modules. Every admitted corpus artifact requires paired YAML human/static metadata and JSON system/actor/state metadata. Explicit invocation recommended.",
+      "metadata": {
+        "opencode/autoinvoke": "false"
+      }
+    },
+    {
+      "id": "update-ledger-compact",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/update-ledger-compact/SKILL.md",
+      "sha256": "11597252522b2e66b0945b28fa0ccdbfdd81e7fee00accb780622ea445d8ff9e",
+      "description": "Persist Dynamic Build Ledger continuity safely before an OpenCode context compaction.",
+      "metadata": {}
+    },
+    {
+      "id": "workspace-snapshot",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/workspace-snapshot/SKILL.md",
+      "sha256": "49b355d29db48ffb6846cb36a8e0eddfb0124e60010b7d22c3c96f4666184917",
+      "description": "Create and verify a deterministic, content-addressed workspace snapshot from a ZIP, Git repository, local directory, or file without executing target code. Use when an agent needs a portable source view, stable snapshot identity, handoff checkpoint, drift check, or resumable workspace reference.",
+      "metadata": {}
+    },
+    {
+      "id": "zero-review-graph",
+      "kind": "native-skill-md",
+      "source_path": "skillz_expanded/zero-review-graph/SKILL.md",
+      "sha256": "05e72e3800f768c055f1b5a3d2e428d7255e6c8892ecbebe2a0287bff840079d",
+      "description": "Graph-first code review and debugging for Go/Rust/ZeroLang workspaces. Use minimal context, reverse-dependency blast radius, stable workspace snapshot IDs, and Zerolang compiler facts before broad source reads.",
+      "metadata": {
+        "opencode/slash": "true",
+        "opencode/autoinvoke": "true",
+        "classification": "A,D"
+      }
+    },
+    {
+      "id": "build-tt-adhd",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/build-tt-adhd",
+      "sha256": "03c2843e86f8dc2b84dd17f54dece9443b6737188dc7c89af6b779938935dd08",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "build-tt-handoff",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/build-tt-handoff",
+      "sha256": "cd7eb5736cb68ea4be1ced3420f96608f1397393fc3166e9117daf691d84a009",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "build-tt-rake",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/build-tt-rake",
+      "sha256": "01fcfef183f7450bc5f1488d9b516dae37cd2b0d19835830df9e316f8c95769d",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "dev-planning-research",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/dev-planning-research",
+      "sha256": "813ff7b998ecc3988bb8704133d676ad43f6a678cdbca6b4738343177ac45350",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "planning-brainstorm-light-research",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/planning-brainstorm-light-research",
+      "sha256": "889bbb4ef1f9e7433c15fde04cb1f85dd2f2bb2533eea40bb9d9296c73a57d5a",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "project-review-suggestions",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/project-review-suggestions",
+      "sha256": "b5d9107467e0f1e963bf5e202370c4050a833498768a2f5d096bb47ae89428bb",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "public-release-finalizer",
+      "kind": "legacy-prompt-source",
+      "source_path": "donSquad/public-release-finalizer",
+      "sha256": "ea7685af0d9893f5179b11474b00ee1616b0278510219676637fa04cfe806ab2",
+      "description": "Direct workflow prompt in uploaded skill pack; route only when OpenCode actually advertises/installs this ID.",
+      "metadata": {}
+    },
+    {
+      "id": "ash-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "automation-bounds-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "bash-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "chat-hosting-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "cryptography-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "specialized",
+        "status": null
+      }
+    },
+    {
+      "id": "data-persistence-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "economy-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "git-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "html-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "js-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "kmail-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "kol-cli-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "logging-telemetry-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": "stub-reserved"
+      }
+    },
+    {
+      "id": "matrix-lattice-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "specialized",
+        "status": null
+      }
+    },
+    {
+      "id": "mcp-tooling-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "mobile-platform-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "specialized",
+        "status": null
+      }
+    },
+    {
+      "id": "orchestration-dag-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "python-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "runstate-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "security-credential-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": "stub-reserved"
+      }
+    },
+    {
+      "id": "testing-validation-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": "stub-reserved"
+      }
+    },
+    {
+      "id": "third-party-integration-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    },
+    {
+      "id": "typescript-skill",
+      "kind": "taxonomy-only",
+      "source_path": "skill-tree/skills-index.yaml",
+      "sha256": null,
+      "description": "Taxonomy/index entry only; no executable SKILL.md found in uploaded pack.",
+      "metadata": {
+        "tier": "core",
+        "status": null
+      }
+    }
+  ]
+}

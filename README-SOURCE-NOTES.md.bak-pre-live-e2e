@@ -1,0 +1,29 @@
+# Goblin-D.M.T. README source notes
+
+Generated: 2026-09-10
+
+## Authority order
+
+1. Current `dmt@0.3.0` source tree
+2. User's canonical rename: Goblin-D.M.T. / Goblin-Dynamic.Meta.Transfusion / `g-dmt` / npm+CLI `dmt`
+3. Uploaded current skill pack: `opencode-skillz-master(2).zip`
+4. Current OpenCode skill-discovery contracts consulted during this build
+5. Brand/presentation rules supplied in this session
+
+## Skill source
+
+Uploaded skill-pack SHA-256:
+`f3949bc7e88805d62814d209084481567de22ee4ba8b3939f948a6f2fa5f7d02`
+
+D.M.T. records 14 native SKILL.md definitions, 7 direct workflow sources, and 23 taxonomy-only entries. Only actual/host-advertised skill IDs can execute.
+
+## Render binding
+
+README SHA-256:
+`4c721ae9e4bf9f031115d92cab669e3dc4d64c7236fa91522b165ffb93aa984f`
+
+`rendered-demo.html` was generated from that exact Markdown snapshot.
+
+## Verification language
+
+The README's `25/25 PASS` refers to local compile/mock-host/CLI tests. It intentionally does not claim a live OpenCode/provider run.

@@ -1,0 +1,168 @@
+
+> dmt@0.3.0 test
+> npm run build && node --test test/*.mjs
+
+
+> dmt@0.3.0 build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: dmt init installs canonical g-dmt agent, skill, and config
+ok 1 - dmt init installs canonical g-dmt agent, skill, and config
+  ---
+  duration_ms: 75.140263
+  type: 'test'
+  ...
+# Subtest: bundled agent structurally gates explicit-only user skills
+ok 2 - bundled agent structurally gates explicit-only user skills
+  ---
+  duration_ms: 2.851516
+  type: 'test'
+  ...
+# Subtest: CLI skill route and skill state events round trip
+ok 3 - CLI skill route and skill state events round trip
+  ---
+  duration_ms: 348.436927
+  type: 'test'
+  ...
+# Subtest: prompt stdin save/load remains pipe-safe
+ok 4 - prompt stdin save/load remains pipe-safe
+  ---
+  duration_ms: 129.224013
+  type: 'test'
+  ...
+# Subtest: MarkItDown boundary uses argv without shell and ingests converter output
+ok 5 - MarkItDown boundary uses argv without shell and ingests converter output
+  ---
+  duration_ms: 96.421323
+  type: 'test'
+  ...
+# Subtest: opencode wrapper passes hostile prompt as one argv value with shell disabled
+ok 6 - opencode wrapper passes hostile prompt as one argv value with shell disabled
+  ---
+  duration_ms: 157.380537
+  type: 'test'
+  ...
+# Subtest: npm pack manifest contains renamed control plane and skill-routing artifacts
+ok 7 - npm pack manifest contains renamed control plane and skill-routing artifacts
+  ---
+  duration_ms: 303.180968
+  type: 'test'
+  ...
+# Subtest: long-lived runtime observes external CLI commit approval without restart
+ok 8 - long-lived runtime observes external CLI commit approval without restart
+  ---
+  duration_ms: 99.383024
+  type: 'test'
+  ...
+# Subtest: prompt push/pull preserves prompt metadata
+ok 9 - prompt push/pull preserves prompt metadata
+  ---
+  duration_ms: 20.759256
+  type: 'test'
+  ...
+# Subtest: state machine is phase-bound and hash-chained
+ok 10 - state machine is phase-bound and hash-chained
+  ---
+  duration_ms: 2.615861
+  type: 'test'
+  ...
+# Subtest: debug/develop require execute+verify before decode
+ok 11 - debug/develop require execute+verify before decode
+  ---
+  duration_ms: 1.811633
+  type: 'test'
+  ...
+# Subtest: user commit approval is not grantable by ordinary transition
+ok 12 - user commit approval is not grantable by ordinary transition
+  ---
+  duration_ms: 0.901465
+  type: 'test'
+  ...
+# Subtest: lazy graph evaluates shared dependency once
+ok 13 - lazy graph evaluates shared dependency once
+  ---
+  duration_ms: 0.479811
+  type: 'test'
+  ...
+# Subtest: plugin identity is renamed to dmt
+ok 14 - plugin identity is renamed to dmt
+  ---
+  duration_ms: 0.693493
+  type: 'test'
+  ...
+# Subtest: stable V1 mock executes skill-routed develop lifecycle end to end
+ok 15 - stable V1 mock executes skill-routed develop lifecycle end to end
+  ---
+  duration_ms: 154.550283
+  type: 'test'
+  ...
+# Subtest: V2 mock registers dmt tools and filters routes from ctx.skill.list
+ok 16 - V2 mock registers dmt tools and filters routes from ctx.skill.list
+  ---
+  duration_ms: 8.536579
+  type: 'test'
+  ...
+# Subtest: uploaded skill inventory records native, legacy, and taxonomy-only distinctions
+ok 17 - uploaded skill inventory records native, legacy, and taxonomy-only distinctions
+  ---
+  duration_ms: 0.994415
+  type: 'test'
+  ...
+# Subtest: current skill catalog has curated executable routes without taxonomy ghosts
+ok 18 - current skill catalog has curated executable routes without taxonomy ghosts
+  ---
+  duration_ms: 1.468166
+  type: 'test'
+  ...
+# Subtest: workspace snapshot routes first for archive identity work
+ok 19 - workspace snapshot routes first for archive identity work
+  ---
+  duration_ms: 8.628518
+  type: 'test'
+  ...
+# Subtest: OpenCode plugin builder routes for plugin work
+ok 20 - OpenCode plugin builder routes for plugin work
+  ---
+  duration_ms: 0.391078
+  type: 'test'
+  ...
+# Subtest: explicit-only presentation and research skills never auto-route
+ok 21 - explicit-only presentation and research skills never auto-route
+  ---
+  duration_ms: 0.426642
+  type: 'test'
+  ...
+# Subtest: legacy make-build-ledger is explicit/read-only while DBL may route by intent
+ok 22 - legacy make-build-ledger is explicit/read-only while DBL may route by intent
+  ---
+  duration_ms: 0.377207
+  type: 'test'
+  ...
+# Subtest: routing filters a known skill that OpenCode does not advertise
+ok 23 - routing filters a known skill that OpenCode does not advertise
+  ---
+  duration_ms: 0.405159
+  type: 'test'
+  ...
+# Subtest: skill activation is serialized in canonical state and phase does not advance
+ok 24 - skill activation is serialized in canonical state and phase does not advance
+  ---
+  duration_ms: 1.57
+  type: 'test'
+  ...
+# Subtest: skill completion cannot close the wrong active skill
+ok 25 - skill completion cannot close the wrong active skill
+  ---
+  duration_ms: 0.446951
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1172.193179

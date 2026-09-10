@@ -1,0 +1,415 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# Goblin-D.M.T. live OpenCode smoke test (stable OpenCode 1.18.30+)
+#
+# Exercises:
+#   - real OpenCode CLI/version/model discovery
+#   - isolated git workspace
+#   - dmt init -> project-local g-dmt agent + g-dmt skill
+#   - local DMT plugin loaded by real OpenCode
+#   - /global/health, /agent, /experimental/tool/ids
+#   - D.M.T. skill router preflight
+#   - CLI -> long-lived plugin cross-process state refresh
+#   - provider-backed g-dmt turn attached to the same server
+#   - native skill(workspace-snapshot) load + dmt_state tool call
+#   - skill completion/ledger persistence
+#   - no tracked project mutation during the read-only live turn
+#
+# Useful overrides:
+#   DMT_ROOT=/path/to/goblin-dmt-v0.3.0
+#   OPENCODE_BIN=opencode
+#   DMT_MODEL=tokenrouter/z-ai/glm-5.3-free
+#   DMT_AGENT=g-dmt
+#   DMT_SMOKE_SKILL=workspace-snapshot
+#   DMT_TURN_TIMEOUT=180
+#   DMT_KEEP_SMOKE=1
+#
+# The test is repository-isolated, but intentionally keeps your real HOME so
+# OpenCode can see your configured provider auth and global skill library.
+
+MIN_OPENCODE_VERSION="1.18.30"
+OPENCODE_BIN="${OPENCODE_BIN:-opencode}"
+DMT_MODEL="${DMT_MODEL:-tokenrouter/z-ai/glm-5.3-free}"
+DMT_AGENT="${DMT_AGENT:-g-dmt}"
+DMT_SMOKE_SKILL="${DMT_SMOKE_SKILL:-workspace-snapshot}"
+DMT_TURN_TIMEOUT="${DMT_TURN_TIMEOUT:-180}"
+DMT_KEEP_SMOKE="${DMT_KEEP_SMOKE:-0}"
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+SCRIPT_PARENT="$(cd -- "$SCRIPT_DIR/.." 2>/dev/null && pwd -P || true)"
+DEFAULT_ROOT="$HOME/repos/Build Dev/build-dev-goblin-dmt/goblin-dmt-v0.3.0"
+
+if [[ -n "${DMT_ROOT:-}" ]]; then
+  DMT_ROOT="$(cd -- "$DMT_ROOT" && pwd -P)"
+elif [[ -f "$SCRIPT_PARENT/package.json" ]] && python3 - "$SCRIPT_PARENT/package.json" <<'PY' >/dev/null 2>&1
+import json,sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    raise SystemExit(0 if json.load(f).get("name") == "dmt" else 1)
+PY
+then
+  DMT_ROOT="$SCRIPT_PARENT"
+else
+  DMT_ROOT="$DEFAULT_ROOT"
+fi
+
+SMOKE_DIR=""
+SERVER_PID=""
+SERVER_LOG=""
+SUCCESS=0
+
+info() { printf 'INFO  %s\n' "$*"; }
+pass() { printf 'PASS  %s\n' "$*"; }
+warn() { printf 'WARN  %s\n' "$*" >&2; }
+fail() { printf 'FAIL  %s\n' "$*" >&2; exit 1; }
+
+cleanup() {
+  local rc=$?
+  if [[ -n "$SERVER_PID" ]] && kill -0 "$SERVER_PID" 2>/dev/null; then
+    kill "$SERVER_PID" 2>/dev/null || true
+    for _ in {1..20}; do
+      kill -0 "$SERVER_PID" 2>/dev/null || break
+      sleep 0.1
+    done
+    kill -9 "$SERVER_PID" 2>/dev/null || true
+  fi
+
+  if [[ -n "$SMOKE_DIR" && -d "$SMOKE_DIR" ]]; then
+    if [[ "$DMT_KEEP_SMOKE" == "1" || "$SUCCESS" != "1" ]]; then
+      info "smoke workspace preserved: $SMOKE_DIR"
+      [[ -n "$SERVER_LOG" && -f "$SERVER_LOG" ]] && info "server log: $SERVER_LOG"
+    else
+      rm -rf -- "$SMOKE_DIR"
+    fi
+  fi
+  return "$rc"
+}
+trap cleanup EXIT INT TERM
+
+need() { command -v "$1" >/dev/null 2>&1 || fail "required command not found: $1"; }
+for cmd in "$OPENCODE_BIN" node npm python3 curl git timeout; do need "$cmd"; done
+
+[[ -d "$DMT_ROOT" ]] || fail "DMT root not found: $DMT_ROOT (set DMT_ROOT=...)"
+[[ -f "$DMT_ROOT/package.json" ]] || fail "missing $DMT_ROOT/package.json"
+[[ -f "$DMT_ROOT/dist/cli.js" ]] || fail "missing built DMT CLI: $DMT_ROOT/dist/cli.js"
+[[ -f "$DMT_ROOT/dist/index.js" ]] || fail "missing built DMT plugin: $DMT_ROOT/dist/index.js"
+[[ -f "$DMT_ROOT/assets/opencode/agents/g-dmt.md" ]] || fail "missing g-dmt agent asset"
+[[ -f "$DMT_ROOT/assets/opencode/skills/g-dmt/SKILL.md" ]] || fail "missing g-dmt skill asset"
+
+DMT_VERSION="$(python3 - "$DMT_ROOT/package.json" <<'PY'
+import json,sys
+with open(sys.argv[1], encoding="utf-8") as f:
+    p=json.load(f)
+if p.get("name") != "dmt":
+    raise SystemExit("package name is not dmt")
+print(p.get("version", "unknown"))
+PY
+)"
+info "dmt_root=$DMT_ROOT"
+info "dmt_version=$DMT_VERSION"
+
+OPENCODE_VERSION_RAW="$($OPENCODE_BIN --version 2>/dev/null | head -n1 | tr -d '\r')"
+OPENCODE_VERSION="${OPENCODE_VERSION_RAW#v}"
+[[ -n "$OPENCODE_VERSION" ]] || fail "could not determine OpenCode version"
+info "opencode_version=$OPENCODE_VERSION"
+
+python3 - "$OPENCODE_VERSION" "$MIN_OPENCODE_VERSION" <<'PY' || fail "OpenCode >= 1.18.30 and < 2.0.0 required for this stable-host smoke"
+import re,sys
+
+def v(s):
+    m=re.match(r"^(\d+)\.(\d+)\.(\d+)", s)
+    if not m: raise SystemExit(2)
+    return tuple(map(int,m.groups()))
+cur=v(sys.argv[1]); minimum=v(sys.argv[2])
+raise SystemExit(0 if cur >= minimum and cur < (2,0,0) else 1)
+PY
+pass "OpenCode stable host is compatible (>= $MIN_OPENCODE_VERSION)"
+
+if "$OPENCODE_BIN" agent list 2>/dev/null | grep -Fq "$DMT_AGENT"; then
+  pass "existing OpenCode installation already discovers $DMT_AGENT agent"
+else
+  info "global $DMT_AGENT agent not required; isolated workspace will install project-local copy"
+fi
+
+MODEL_LIST="$($OPENCODE_BIN models 2>/dev/null || true)"
+if grep -Fq "$DMT_MODEL" <<<"$MODEL_LIST"; then
+  pass "model route discovered: $DMT_MODEL"
+else
+  printf '%s\n' "$MODEL_LIST" | sed -n '1,30p' >&2
+  fail "model route not discovered: $DMT_MODEL (override DMT_MODEL=provider/model)"
+fi
+
+# DMT CLI wrapper always uses the exact source tree being tested.
+dmt() { node "$DMT_ROOT/dist/cli.js" "$@"; }
+
+# Validate canonical DMT routing IDs before booting the host.
+CATALOG_JSON="$(dmt skills catalog)"
+python3 -c '
+import json,re,sys
+items=json.load(sys.stdin)
+if not isinstance(items,list) or not items:
+    raise SystemExit(1)
+seen=set()
+for x in items:
+    i=x.get("id","")
+    if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", i):
+        print("invalid skill id:", i, file=sys.stderr); raise SystemExit(2)
+    if i in seen:
+        print("duplicate skill id:", i, file=sys.stderr); raise SystemExit(3)
+    seen.add(i)
+' <<<"$CATALOG_JSON" || fail "DMT canonical skill catalog validation failed"
+pass "DMT skill routing preflight found no invalid canonical skill definitions"
+
+SMOKE_DIR="$(mktemp -d /tmp/gdmt-e2e.XXXXXX)"
+info "creating isolated smoke repository: $SMOKE_DIR"
+cd "$SMOKE_DIR"
+git init -q
+git config user.name "Goblin-DMT Smoke"
+git config user.email "g-dmt-smoke@invalid.local"
+printf '# Goblin-D.M.T. live smoke fixture\n' > README.md
+cat > .gitignore <<'EOF'
+.g-dmt/
+.opencode/node_modules/
+.opencode/package-lock.json
+.opencode/bun.lock
+.opencode/bun.lockb
+*.log
+live-turn.jsonl
+EOF
+
+# Install the project-local DMT agent and DMT skill.
+dmt init >/tmp/gdmt-init.$$ 2>&1 || { cat /tmp/gdmt-init.$$ >&2; rm -f /tmp/gdmt-init.$$; fail "dmt init failed"; }
+rm -f /tmp/gdmt-init.$$
+[[ -f .opencode/agents/g-dmt.md ]] || fail "dmt init did not install .opencode/agents/g-dmt.md"
+[[ -f .opencode/skills/g-dmt/SKILL.md ]] || fail "dmt init did not install .opencode/skills/g-dmt/SKILL.md"
+pass "dmt init installed project-local g-dmt agent and g-dmt skill"
+
+# Install a PACKED COPY of DMT into this throwaway OpenCode config tree.
+# Do not use a file: dependency here: npm may symlink local packages, causing
+# ESM dependency resolution to jump back to DMT_ROOT and miss .opencode/node_modules.
+mkdir -p .opencode/plugins
+cat > .opencode/package.json <<'EOF'
+{
+  "private": true,
+  "type": "module"
+}
+EOF
+info "packing local DMT source for isolated plugin install"
+DMT_PACK_BASENAME="$(npm pack "$DMT_ROOT" --pack-destination "$SMOKE" --silent | tail -n 1)"
+[[ -n "$DMT_PACK_BASENAME" && -f "$SMOKE/$DMT_PACK_BASENAME" ]] \
+  || fail "npm pack did not produce an installable DMT tarball"
+info "installing packed DMT plugin dependencies inside isolated .opencode"
+npm install --prefix .opencode --ignore-scripts --no-audit --no-fund --silent \
+  "$SMOKE/$DMT_PACK_BASENAME" \
+  || fail "isolated packed npm install failed"
+[[ -f .opencode/node_modules/dmt/dist/index.js ]] || fail "isolated dmt package was not installed"
+[[ ! -L .opencode/node_modules/dmt ]] || fail "isolated dmt package is unexpectedly symlinked"
+pass "packed dmt package installed as a real isolated copy"
+
+# Stable OpenCode 1.18.x must not evaluate the mixed V1/V2 top-level DMT
+# module. Build an isolated V1-only entrypoint from the installed package's
+# compiled V1 section, strip the V2 beta import, and expose exactly one plugin
+# function to OpenCode's local-plugin loader.
+python3 - \
+  .opencode/node_modules/dmt/dist/index.js \
+  .opencode/node_modules/dmt/dist/stable-live.js <<'PY'
+from pathlib import Path
+import sys
+src=Path(sys.argv[1]).read_text(encoding="utf-8")
+marker='const stringProp = { type: "string" };'
+if marker not in src:
+    raise SystemExit("could not locate V1/V2 boundary in installed DMT dist/index.js")
+stable=src.split(marker,1)[0]
+stable='\n'.join(
+    line for line in stable.splitlines()
+    if '@opencode/plugin' not in line
+)
+stable += '\nexport const GoblinDMTLivePlugin = createV1Hooks;\n'
+Path(sys.argv[2]).write_text(stable, encoding="utf-8")
+PY
+
+if grep -Fq '@opencode/plugin' .opencode/node_modules/dmt/dist/stable-live.js; then
+  fail "stable DMT shim still imports OpenCode V2 beta API"
+fi
+cat > .opencode/plugins/dmt-live.js <<'EOF'
+export { GoblinDMTLivePlugin } from "../node_modules/dmt/dist/stable-live.js"
+EOF
+pass "stable-only DMT plugin shim prepared for OpenCode 1.18.x"
+
+# Catch ESM/package-resolution defects before starting the OpenCode server.
+node --input-type=module - "$SMOKE" <<'NODE' >/tmp/gdmt-plugin-import.$$ 2>&1
+import path from "node:path"
+import { pathToFileURL } from "node:url"
+const smoke = process.argv[2]
+const target = path.join(smoke, ".opencode/plugins/dmt-live.js")
+const mod = await import(pathToFileURL(target).href)
+if (typeof mod.GoblinDMTLivePlugin !== "function") {
+  throw new Error("GoblinDMTLivePlugin export is not a function")
+}
+NODE
+IMPORT_STATUS=$?
+if [[ $IMPORT_STATUS -ne 0 ]]; then
+  cat /tmp/gdmt-plugin-import.$$ >&2
+  rm -f /tmp/gdmt-plugin-import.$$
+  fail "stable DMT plugin direct-import preflight failed"
+fi
+rm -f /tmp/gdmt-plugin-import.$$
+pass "stable DMT plugin direct-import preflight passed"
+
+# Create a real DMT run before server startup, then prove routing against a known
+# installed global skill ID. This is local engine state only; no repo mutation.
+dmt begin --mode plan "Live OpenCode smoke: verify DMT host, skill routing, and cross-process state without source mutation" >/dev/null
+ROUTE_JSON="$(dmt skills route "snapshot workspace structure for handoff" --available "[\"$DMT_SMOKE_SKILL\"]")"
+python3 -c '
+import json,sys
+x=json.load(sys.stdin); want=sys.argv[1]
+p=x.get("primary") or {}
+raise SystemExit(0 if p.get("id")==want else 1)
+' "$DMT_SMOKE_SKILL" <<<"$ROUTE_JSON" || { printf '%s\n' "$ROUTE_JSON" >&2; fail "DMT router did not select $DMT_SMOKE_SKILL"; }
+pass "DMT SkillRouterActor selected $DMT_SMOKE_SKILL when advertised"
+
+# Commit the test fixture after all expected setup. .g-dmt and installed deps are
+# ignored, so a later git diff detects accidental model/source mutation.
+git add .
+git commit -qm "smoke: baseline"
+
+PORT="$(python3 - <<'PY'
+import socket
+s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()
+PY
+)"
+BASE="http://127.0.0.1:$PORT"
+SERVER_LOG="$SMOKE_DIR/opencode-server.log"
+info "starting isolated OpenCode server on 127.0.0.1:$PORT"
+
+# Keep real HOME/provider auth/global skills, but project discovery is rooted in
+# this throwaway git repo. Autoupdate/share are disabled for the smoke.
+(
+  cd "$SMOKE_DIR"
+  OPENCODE_DISABLE_AUTOUPDATE=1 \
+  OPENCODE_AUTO_SHARE=false \
+  "$OPENCODE_BIN" serve --hostname 127.0.0.1 --port "$PORT" >"$SERVER_LOG" 2>&1
+) &
+SERVER_PID=$!
+
+HEALTH_JSON=""
+for _ in {1..120}; do
+  if HEALTH_JSON="$(curl -fsS --max-time 2 "$BASE/global/health" 2>/dev/null)"; then
+    break
+  fi
+  if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+    tail -n 120 "$SERVER_LOG" >&2 || true
+    fail "OpenCode server exited before becoming healthy"
+  fi
+  sleep 0.25
+done
+[[ -n "$HEALTH_JSON" ]] || { tail -n 120 "$SERVER_LOG" >&2 || true; fail "OpenCode server did not become healthy"; }
+python3 -c 'import json,sys; x=json.load(sys.stdin); raise SystemExit(0 if x.get("healthy") is True else 1)' <<<"$HEALTH_JSON" \
+  || fail "OpenCode /global/health did not report healthy=true"
+pass "OpenCode server healthy at $BASE"
+
+SERVER_VERSION="$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("version",""))' <<<"$HEALTH_JSON")"
+[[ "${SERVER_VERSION#v}" == "$OPENCODE_VERSION" ]] || fail "server/CLI version mismatch: cli=$OPENCODE_VERSION server=$SERVER_VERSION"
+pass "server version matches CLI: $SERVER_VERSION"
+
+AGENTS_JSON="$(curl -fsS "$BASE/agent")"
+python3 -c '
+import json,sys
+want=sys.argv[1]; data=json.load(sys.stdin)
+def vals(x):
+    if isinstance(x,dict):
+        for k,v in x.items():
+            if k in ("id","name") and isinstance(v,str): yield v
+            yield from vals(v)
+    elif isinstance(x,list):
+        for v in x: yield from vals(v)
+raise SystemExit(0 if want in set(vals(data)) else 1)
+' "$DMT_AGENT" <<<"$AGENTS_JSON" || { printf '%s\n' "$AGENTS_JSON" >&2; fail "server API did not discover $DMT_AGENT agent"; }
+pass "server API discovers $DMT_AGENT agent"
+
+TOOLS_JSON="$(curl -fsS --get --data-urlencode "directory=$SMOKE" "$BASE/experimental/tool/ids")"
+for tool_id in \
+  dmt_begin dmt_state dmt_transition dmt_checkpoint dmt_format \
+  dmt_prompt_store dmt_skill_route dmt_skill_event dmt_sync; do
+  python3 -c '
+import json,sys
+want=sys.argv[1]; x=json.load(sys.stdin)
+vals=[]
+def walk(v):
+    if isinstance(v,str): vals.append(v)
+    elif isinstance(v,list):
+        for i in v: walk(i)
+    elif isinstance(v,dict):
+        for i in v.values(): walk(i)
+walk(x); raise SystemExit(0 if want in vals else 1)
+' "$tool_id" <<<"$TOOLS_JSON" || { printf '%s\n' "$TOOLS_JSON" >&2; fail "server tool registry missing $tool_id"; }
+done
+pass "server API discovers all 9 Goblin-D.M.T. plugin tools"
+
+# Now mutate only DMT engine state from the separate CLI process. The already
+# running plugin must refresh from disk and observe this without restart.
+dmt skills event activate "$DMT_SMOKE_SKILL" --reason "live smoke cross-process activation" >/dev/null
+STATE_JSON="$(dmt state)"
+python3 -c '
+import json,sys
+x=json.load(sys.stdin); want=sys.argv[1]
+a=((x.get("state") or {}).get("skills") or {}).get("active") or {}
+raise SystemExit(0 if a.get("id")==want else 1)
+' "$DMT_SMOKE_SKILL" <<<"$STATE_JSON" || fail "CLI activation did not enter canonical DMT state"
+pass "CLI activated $DMT_SMOKE_SKILL in canonical DMT state"
+
+LIVE_OUT="$SMOKE_DIR/live-turn.jsonl"
+LIVE_PROMPT="LIVE SMOKE ONLY. Do not edit files, run shell commands, launch subagents, or use web tools. First load the native OpenCode skill '$DMT_SMOKE_SKILL' using the skill tool, but do not execute any helper/script from that skill. Then call dmt_state exactly once. Confirm from the tool result that active skill is '$DMT_SMOKE_SKILL'. Reply with the exact marker DMT_LIVE_OK and a compact phase/active-skill summary."
+
+info "running provider-backed $DMT_AGENT turn via $DMT_MODEL attached to live server"
+set +e
+timeout "${DMT_TURN_TIMEOUT}s" "$OPENCODE_BIN" run \
+  --attach "$BASE" \
+  --dir "$SMOKE_DIR" \
+  --model "$DMT_MODEL" \
+  --agent "$DMT_AGENT" \
+  --format json \
+  "$LIVE_PROMPT" >"$LIVE_OUT" 2>&1
+LIVE_RC=$?
+set -e
+if [[ "$LIVE_RC" -ne 0 ]]; then
+  tail -n 160 "$LIVE_OUT" >&2 || true
+  fail "provider-backed OpenCode turn failed/timeout (rc=$LIVE_RC)"
+fi
+
+grep -Fq 'dmt_state' "$LIVE_OUT" || { tail -n 160 "$LIVE_OUT" >&2; fail "live turn did not call dmt_state"; }
+grep -Fq "$DMT_SMOKE_SKILL" "$LIVE_OUT" || { tail -n 160 "$LIVE_OUT" >&2; fail "live turn did not observe/load $DMT_SMOKE_SKILL"; }
+grep -Fq 'DMT_LIVE_OK' "$LIVE_OUT" || { tail -n 160 "$LIVE_OUT" >&2; fail "live turn did not return DMT_LIVE_OK marker"; }
+pass "provider-backed $DMT_AGENT turn loaded $DMT_SMOKE_SKILL and called dmt_state"
+pass "live plugin observed CLI-owned active skill without server restart"
+
+# The live turn was instructed to be read-only. Verify tracked fixture bytes.
+git diff --quiet && git diff --cached --quiet \
+  || { git status --short >&2; git diff -- >&2 || true; fail "live smoke mutated tracked repository files"; }
+pass "provider-backed smoke left tracked repository content unchanged"
+
+# Finish the skill from the CLI and prove durable history/clock state.
+dmt skills event complete "$DMT_SMOKE_SKILL" --reason "live smoke complete" >/dev/null
+FINAL_STATE="$(dmt state)"
+python3 -c '
+import json,sys
+x=json.load(sys.stdin); want=sys.argv[1]
+s=x.get("state") or {}; skills=s.get("skills") or {}
+if skills.get("active") not in (None, {}): raise SystemExit(1)
+h=skills.get("history") or []
+if not any(i.get("id")==want and i.get("status")=="completed" for i in h): raise SystemExit(2)
+if int(s.get("logicalClock",0)) < 2: raise SystemExit(3)
+' "$DMT_SMOKE_SKILL" <<<"$FINAL_STATE" || fail "DMT skill completion/history verification failed"
+pass "$DMT_SMOKE_SKILL completion persisted in DMT ledger"
+
+# The API should remain healthy after the provider turn and tool calls.
+curl -fsS --max-time 2 "$BASE/global/health" >/dev/null || fail "OpenCode server unhealthy after live turn"
+pass "OpenCode server remained healthy after live DMT turn"
+
+SUCCESS=1
+printf '\nPASS  GOBLIN_DMT_LIVE_E2E\n'
+printf 'INFO  model=%s\n' "$DMT_MODEL"
+printf 'INFO  agent=%s\n' "$DMT_AGENT"
+printf 'INFO  skill=%s\n' "$DMT_SMOKE_SKILL"
+printf 'INFO  dmt_version=%s\n' "$DMT_VERSION"
+printf 'INFO  opencode_version=%s\n' "$OPENCODE_VERSION"

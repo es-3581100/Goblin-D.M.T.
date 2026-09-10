@@ -1,0 +1,55 @@
+{
+  "name": "dmt",
+  "version": "0.3.0",
+  "description": "Goblin-D.M.T. (Dynamic Meta Transfusion): dual-host OpenCode actor runtime with engine-state-bound exploration, skill routing, edit masks, verification, prompt pipes, and user-controlled persistence.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./engine": "./dist/engine/index.js"
+  },
+  "bin": {
+    "dmt": "./dist/cli.js",
+    "g-dmt": "./dist/cli.js",
+    "stf": "./dist/cli.js",
+    "stable-text-fusion": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "rendered-demo.html",
+    "README-SOURCE-NOTES.md",
+    "VALIDATION.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "^1.18.30",
+    "@opencode/plugin": "beta"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "@types/node": "^22.15.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "keywords": [
+    "opencode",
+    "agent",
+    "actor-model",
+    "skills",
+    "prompt",
+    "meta-prompt",
+    "text-fusion",
+    "markitdown",
+    "g-dmt"
+  ]
+}

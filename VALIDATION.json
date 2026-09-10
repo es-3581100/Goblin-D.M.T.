@@ -1,0 +1,19 @@
+{
+  "schema": "g-dmt-readme-validation/v1",
+  "version": "0.3.0",
+  "readme_sha256": "4c721ae9e4bf9f031115d92cab669e3dc4d64c7236fa91522b165ffb93aa984f",
+  "checks": {
+    "canonical_name_present": true,
+    "npm_cli_dmt_present": true,
+    "skill_counts_present": true,
+    "skill_router_documented": true,
+    "explicit_only_documented": true,
+    "smoke_boundary_honest": true,
+    "render_bound_to_readme": true,
+    "responsive_render": true,
+    "reduced_motion": true,
+    "fake_operational_metrics_added": false,
+    "packed_artifact_e2e": true
+  },
+  "status": "PASS"
+}

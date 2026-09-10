@@ -1,0 +1,14 @@
+{
+  "stateDir": ".g-dmt",
+  "strictPhaseGate": true,
+  "mutationTools": ["edit", "write", "apply_patch", "patch"],
+  "agentCanSave": true,
+  "agentCanSync": false,
+  "autoCheckpoint": true,
+  "markitdownCommand": "markitdown",
+  "markitdownMode": "go",
+  "requireCommitApproval": false,
+  "remoteDir": "",
+  "skillRoutingEnabled": true,
+  "skillCatalog": "user-skills-2026-09-10/f3949bc7"
+}
