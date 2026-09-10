@@ -27,7 +27,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node --test test/*.mjs",
-    "pack:check": "npm pack --dry-run"
+    "pack:check": "npm pack --dry-run",
+    "docs:build": "node scripts/render-readme.mjs",
+    "docs:check": "node scripts/render-readme.mjs --check"
   },
   "dependencies": {
     "@opencode-ai/plugin": "^1.18.30",
@@ -35,7 +37,8 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "@types/node": "^22.15.0"
+    "@types/node": "^22.15.0",
+    "marked": "16.4.2"
   },
   "engines": {
     "node": ">=20"

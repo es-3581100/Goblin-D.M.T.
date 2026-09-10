@@ -42,3 +42,26 @@ result               PASS  GOBLIN_DMT_LIVE_E2E
 That live proof covers project-local agent discovery, packed plugin isolation/import, all nine `dmt_*` tools, native skill loading, `dmt_state`, CLI → live-plugin state propagation, tracked-worktree immutability, ledger completion persistence, and post-turn server health.
 
 It does not yet claim verification of the native OpenCode permission UI or a user-approved masked write.
+
+## Dynamic documentation pipeline
+
+`README.md` is the portable documentation authority.
+
+The dynamic presentation path is:
+
+```text
+README.md
+  -> scripts/render-readme.mjs
+  -> rendered-demo.html
+  -> site/index.html
+  -> GitHub Pages
+```
+
+`.github/workflows/pages.yml` regenerates `site/index.html` from the current `README.md`
+on relevant pushes to `main` and deploys the generated `site/` artifact. The workflow
+has read-only repository-content permission plus the GitHub Pages deployment permissions;
+it does not commit generated files back into the repository.
+
+`rendered-demo.html` is a checked-in local preview artifact. Run `npm run docs:build`
+before committing it when you want that repository copy to remain synchronized.
+

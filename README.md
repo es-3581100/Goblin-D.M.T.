@@ -4,6 +4,12 @@
   <img src="assets/goblin-dmt-banner.png" alt="Goblin-D.M.T. — Dynamic Meta Transfusion illustrated banner" width="100%">
 </p>
 
+<p align="center">
+  <strong><a href="https://es-3581100.github.io/Goblin-D.M.T./">⚗ Open the Dynamic Runtime Manual</a></strong>
+  ·
+  <a href="https://github.com/es-3581100/Goblin-D.M.T.">GitHub-native README</a>
+</p>
+
 > **The goblins explore. The engine remembers. Evidence decides. The user controls the transfusion.**
 
 **Goblin-D.M.T.** — **Goblin-Dynamic.Meta.Transfusion** — is an actor-driven runtime for OpenCode coding agents. It turns model exploration, branching, uncertainty, tool appetite, and premature convergence into bounded work that can be routed, evidenced, constrained, verified, checkpointed, and resumed.
@@ -494,6 +500,10 @@ inspection      = verification
 ├── README.md
 └── package.json
 ```
+
+## If you liked Goblin-D.M.T.
+
+If this project was useful or interesting, visit **[Goblin-Logic-Manager](https://github.com/es-3581100/Goblin-Logic-Manager)** — another Goblin project focused on disciplined OpenCode development behavior, model-specific tuning overlays, reproducible agent rendering, and validation-gated expansion.
 
 ## Release boundary
 

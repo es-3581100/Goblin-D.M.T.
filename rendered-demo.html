@@ -1,7 +1,248 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Goblin-D.M.T. — README Runtime Manual</title><style>
-:root{--bg:#11130f;--surface:#1a1d16;--ink:#e8e4d6;--muted:#a9aa98;--moss:#9dba52;--blood:#d86545;--brass:#b7a06a;--line:#3b4031;--ok:#a6c763;--code:#0c0e0a}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.62 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.shell{display:grid;grid-template-columns:260px minmax(0,900px) 250px;gap:28px;max-width:1480px;margin:auto;padding:22px}nav,.rail{position:sticky;top:18px;height:calc(100vh - 36px);overflow:auto}.brand{padding:14px 0 18px;border-bottom:1px solid var(--line);margin-bottom:12px}.brand strong{display:block;color:var(--moss);font-size:18px}.brand small,.rail{color:var(--muted)}nav a{display:block;color:var(--muted);text-decoration:none;padding:5px 8px;border-left:2px solid transparent}nav a:hover,nav a:focus-visible{color:var(--ink);border-left-color:var(--moss);background:#20251b;outline:none}.nav-l2{padding-left:18px;font-size:12px}main{min-width:0;padding-bottom:80px}.hero{border-top:3px solid var(--moss);border-bottom:1px solid var(--line);padding:22px 0 16px;margin-bottom:26px}.hero .eyebrow{color:var(--brass);font-size:12px;letter-spacing:.16em}.hero .flow{margin-top:10px;color:var(--muted)}h1,h2,h3{font-family:ui-sans-serif,system-ui,sans-serif;line-height:1.2;scroll-margin-top:20px}h1{font-size:38px}h2{font-size:24px;margin-top:2.2em;padding-bottom:8px;border-bottom:1px solid var(--line)}h3{font-size:17px;color:var(--brass);margin-top:1.8em}.anchor{opacity:0;margin-left:8px;color:var(--moss);text-decoration:none}h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,.anchor:focus{opacity:1}a{color:#c5d980}blockquote{padding:10px 16px;border-left:4px solid var(--blood);background:#181b15;color:#ddd7c4}code{background:#20241b;padding:1px 4px;border-radius:2px}pre{position:relative;background:var(--code);border-left:3px solid var(--brass);padding:16px;overflow:auto;box-shadow:0 8px 26px #0005}pre code{background:transparent;padding:0}.copy{position:absolute;right:7px;top:7px;border:1px solid var(--line);background:#181c15;color:var(--muted);font:inherit;font-size:11px;padding:4px 7px;cursor:pointer}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;margin:18px 0}th,td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}th{color:var(--brass);background:#181b15}.rail{border-left:1px solid var(--line);padding-left:18px;font-size:12px}.meter{padding:10px 0;border-bottom:1px solid var(--line)}.meter b{display:block;color:var(--ink)}.pass{color:var(--ok)}.warn{color:#d4a84f}footer{margin-top:50px;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:12px}@media(max-width:1100px){.shell{grid-template-columns:220px minmax(0,1fr)}.rail{display:none}}@media(max-width:760px){.shell{display:block;padding:16px}nav{position:static;height:auto;max-height:220px;margin-bottom:25px;border-bottom:1px solid var(--line)}h1{font-size:30px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
-</style></head><body><div class="shell"><nav aria-label="README sections"><div class="brand"><strong>GOBLIN-D.M.T.</strong><small>Dynamic.Meta.Transfusion<br>runtime manual · v0.3.0</small></div><a class="nav-l1" href="#goblin-d-m-t">Goblin-D.M.T.</a><a class="nav-l2" href="#status">Status</a><a class="nav-l2" href="#why-this-exists">Why this exists</a><a class="nav-l2" href="#runtime-shape">Runtime shape</a><a class="nav-l2" href="#install">Install</a><a class="nav-l2" href="#quick-start">Quick start</a><a class="nav-l2" href="#engine-phases">Engine phases</a><a class="nav-l2" href="#actors">Actors</a><a class="nav-l2" href="#skill-routing">Skill routing</a><a class="nav-l2" href="#plugin-tools">Plugin tools</a><a class="nav-l2" href="#mutation-strength-and-code-inpainting">Mutation strength and code inpainting</a><a class="nav-l2" href="#user-controlled-boundaries">User-controlled boundaries</a><a class="nav-l2" href="#prompt-ingestion-and-persistence">Prompt ingestion and persistence</a><a class="nav-l2" href="#compaction-and-model-handoff">Compaction and model handoff</a><a class="nav-l2" href="#opencode-integration">OpenCode integration</a><a class="nav-l2" href="#verification">Verification</a><a class="nav-l2" href="#design-lineage">Design lineage</a><a class="nav-l2" href="#brand-interface-principle">Brand/interface principle</a><a class="nav-l2" href="#repository-layout">Repository layout</a><a class="nav-l2" href="#release-boundary">Release boundary</a></nav><main><div class="hero"><div class="eyebrow">GOBLIN WORKSHOP / DOCUMENTATION VIEW</div><div class="flow">goblins explore → engine remembers → evidence decides → user controls transfusion</div></div><h1 id="goblin-d-m-t">Goblin-D.M.T.<a class="anchor" href="#goblin-d-m-t">#</a></h1>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#11130f">
+<meta name="description" content="Goblin-D.M.T. — Dynamic Meta Transfusion runtime manual">
+<meta property="og:title" content="Goblin-D.M.T. — Dynamic Meta Transfusion">
+<meta property="og:description" content="Actor-driven OpenCode runtime for bounded, evidence-backed agent work.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://es-3581100.github.io/Goblin-D.M.T./">
+<meta property="og:image" content="https://es-3581100.github.io/Goblin-D.M.T./assets/goblin-dmt-banner.png">
+<link rel="canonical" href="https://es-3581100.github.io/Goblin-D.M.T./">
+<title>Goblin-D.M.T. — Dynamic Runtime Manual</title>
+<style>
+:root{
+  --bg:#11130f;
+  --surface:#191c16;
+  --surface2:#20241b;
+  --elevated:#292e21;
+  --ink:#e8e4d6;
+  --muted:#a9aa98;
+  --moss:#9dba52;
+  --blood:#d86545;
+  --brass:#b7a06a;
+  --ok:#a6c763;
+  --warn:#d4a84f;
+  --danger:#d65d4d;
+  --info:#8fa89a;
+  --line:#3b4031;
+  --code:#0c0e0a;
+  --max:930px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 50% -10%,#29311c 0,transparent 34rem),
+    linear-gradient(180deg,#11130f,#0e100c 72%);
+  color:var(--ink);
+  font:15px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace
+}
+a{color:#c5d980;text-underline-offset:3px}
+a:hover{color:#e1efab}
+.topbar{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  min-height:46px;padding:8px 18px;
+  border-bottom:1px solid var(--line);
+  background:#11130fe8;
+  backdrop-filter:blur(14px)
+}
+.topbar .brand{color:var(--moss);font-weight:800;letter-spacing:.06em;text-decoration:none}
+.topbar .links{display:flex;gap:14px;flex-wrap:wrap;font-size:12px}
+.shell{
+  display:grid;
+  grid-template-columns:260px minmax(0,var(--max)) 250px;
+  gap:28px;
+  max-width:1510px;
+  margin:auto;
+  padding:24px 22px 80px
+}
+nav,.rail{
+  position:sticky;top:70px;
+  height:calc(100vh - 92px);
+  overflow:auto;
+  scrollbar-width:thin
+}
+nav{padding-right:10px}
+.nav-head{
+  padding:10px 8px 14px;
+  margin-bottom:10px;
+  border-bottom:1px solid var(--line)
+}
+.nav-head strong{display:block;color:var(--moss);font-size:15px}
+.nav-head small{color:var(--muted)}
+nav a{
+  display:block;color:var(--muted);text-decoration:none;
+  padding:5px 8px;border-left:2px solid transparent
+}
+nav a:hover,nav a:focus-visible{
+  color:var(--ink);border-left-color:var(--moss);background:var(--surface2);outline:none
+}
+.nav-l1{font-weight:800;color:var(--ink)!important}
+.nav-l2{padding-left:14px;font-size:12px}
+.nav-l3{padding-left:25px;font-size:11px;opacity:.9}
+main{min-width:0}
+.markdown-body{
+  border-top:3px solid var(--moss);
+  padding-top:12px
+}
+.markdown-body>p[align="center"]:first-of-type{
+  margin:0 0 20px;
+  padding:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:#090a08
+}
+.markdown-body>p[align="center"]:first-of-type img{
+  display:block;
+  width:100%;
+  max-width:none!important;
+  height:auto;
+  margin:0
+}
+h1,h2,h3{
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.2;
+  scroll-margin-top:72px
+}
+h1{font-size:38px;margin:25px 0 18px;color:#f3ecd7}
+h2{font-size:24px;margin-top:2.15em;padding-bottom:8px;border-bottom:1px solid var(--line)}
+h3{font-size:17px;color:var(--brass);margin-top:1.8em}
+.anchor{
+  opacity:0;margin-left:8px;color:var(--moss);
+  text-decoration:none;font-family:ui-monospace,monospace;font-size:.7em
+}
+h1:hover .anchor,h2:hover .anchor,h3:hover .anchor,.anchor:focus{opacity:1}
+blockquote{
+  margin:18px 0;
+  padding:10px 16px;
+  border-left:4px solid var(--blood);
+  background:#181b15;
+  color:#ddd7c4
+}
+code{
+  background:var(--surface2);
+  padding:1px 4px;
+  border-radius:3px
+}
+pre{
+  position:relative;
+  background:var(--code);
+  border:1px solid #24281f;
+  border-left:3px solid var(--brass);
+  padding:16px;
+  overflow:auto;
+  box-shadow:0 8px 26px #0005
+}
+pre code{background:transparent;padding:0}
+.copy{
+  position:absolute;right:7px;top:7px;
+  border:1px solid var(--line);
+  background:#181c15;color:var(--muted);
+  font:inherit;font-size:11px;padding:4px 7px;cursor:pointer
+}
+.copy:hover{color:var(--ink);border-color:var(--moss)}
+table{
+  border-collapse:collapse;width:100%;
+  display:block;overflow-x:auto;margin:18px 0
+}
+th,td{
+  border-bottom:1px solid var(--line);
+  padding:9px 12px;text-align:left;vertical-align:top
+}
+th{color:var(--brass);background:#181b15}
+hr{border:0;border-top:1px solid var(--line);margin:32px 0}
+.rail{
+  border-left:1px solid var(--line);
+  padding-left:18px;
+  color:var(--muted);
+  font-size:12px
+}
+.meter{padding:11px 0;border-bottom:1px solid var(--line)}
+.meter b{display:block;color:var(--ink);overflow-wrap:anywhere}
+.pass{color:var(--ok)!important}
+.warn{color:var(--warn)!important}
+.hash{font-size:10px;word-break:break-all}
+footer{
+  margin-top:50px;border-top:1px solid var(--line);
+  padding-top:18px;color:var(--muted);font-size:12px
+}
+@media(max-width:1120px){
+  .shell{grid-template-columns:220px minmax(0,1fr)}
+  .rail{display:none}
+}
+@media(max-width:780px){
+  .topbar{position:static}
+  .shell{display:block;padding:14px}
+  nav{position:static;height:auto;max-height:260px;margin-bottom:24px;border-bottom:1px solid var(--line)}
+  h1{font-size:30px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{animation:none!important;transition:none!important}
+}
+:focus-visible{outline:2px solid var(--moss);outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="https://es-3581100.github.io/Goblin-D.M.T./">GOBLIN-D.M.T.</a>
+  <div class="links">
+    <a href="https://github.com/es-3581100/Goblin-D.M.T.">GitHub</a>
+    <a href="https://github.com/es-3581100/Goblin-D.M.T./blob/main/README.md">README source</a>
+    <a href="https://github.com/es-3581100/Goblin-D.M.T./blob/main/scripts/render-readme.mjs">renderer</a>
+  </div>
+</header>
+<div class="shell">
+  <nav aria-label="README sections">
+    <div class="nav-head">
+      <strong>DYNAMIC MANUAL</strong>
+      <small>README → deterministic HTML projection</small>
+    </div>
+    <a class="nav-l1" href="#goblin-d-m-t">Goblin-D.M.T.</a>
+<a class="nav-l2" href="#status">Status</a>
+<a class="nav-l2" href="#why-this-exists">Why this exists</a>
+<a class="nav-l2" href="#runtime-shape">Runtime shape</a>
+<a class="nav-l2" href="#install">Install</a>
+<a class="nav-l2" href="#quick-start">Quick start</a>
+<a class="nav-l2" href="#engine-phases">Engine phases</a>
+<a class="nav-l2" href="#actors">Actors</a>
+<a class="nav-l2" href="#skill-routing">Skill routing</a>
+<a class="nav-l3" href="#current-skill-pack-snapshot">Current skill-pack snapshot</a>
+<a class="nav-l3" href="#when-where-and-how-the-current-skills-are-used">When, where, and how the current skills are used</a>
+<a class="nav-l3" href="#recommended-sequential-compositions">Recommended sequential compositions</a>
+<a class="nav-l3" href="#explicit-only-policy">Explicit-only policy</a>
+<a class="nav-l2" href="#plugin-tools">Plugin tools</a>
+<a class="nav-l2" href="#mutation-strength-and-code-inpainting">Mutation strength and code inpainting</a>
+<a class="nav-l2" href="#user-controlled-boundaries">User-controlled boundaries</a>
+<a class="nav-l2" href="#prompt-ingestion-and-persistence">Prompt ingestion and persistence</a>
+<a class="nav-l2" href="#compaction-and-model-handoff">Compaction and model handoff</a>
+<a class="nav-l2" href="#opencode-integration">OpenCode integration</a>
+<a class="nav-l2" href="#verification">Verification</a>
+<a class="nav-l2" href="#design-lineage">Design lineage</a>
+<a class="nav-l2" href="#brand-interface-principle">Brand/interface principle</a>
+<a class="nav-l2" href="#repository-layout">Repository layout</a>
+<a class="nav-l2" href="#if-you-liked-goblin-d-m-t">If you liked Goblin-D.M.T.</a>
+<a class="nav-l2" href="#release-boundary">Release boundary</a>
+  </nav>
+  <main>
+    <article class="markdown-body">
+      <h1 id="goblin-d-m-t">Goblin-D.M.T.<a class="anchor" href="#goblin-d-m-t" aria-label="Link to Goblin-D.M.T.">#</a></h1>
+<p align="center">
+  <img src="assets/goblin-dmt-banner.png" alt="Goblin-D.M.T. — Dynamic Meta Transfusion illustrated banner" width="100%">
+</p>
+
+<p align="center">
+  <strong><a href="https://es-3581100.github.io/Goblin-D.M.T./">⚗ Open the Dynamic Runtime Manual</a></strong>
+  ·
+  <a href="https://github.com/es-3581100/Goblin-D.M.T.">GitHub-native README</a>
+</p>
+
 <blockquote>
 <p><strong>The goblins explore. The engine remembers. Evidence decides. The user controls the transfusion.</strong></p>
 </blockquote>
@@ -16,12 +257,36 @@
 <li><strong>Target models:</strong> GLM, DeepSeek, Kimi, Qwen, Muse, Nemotron, and other OpenCode-capable coding models</li>
 </ul>
 <p>Goblin-D.M.T. is <strong>not</strong> a text diffusion model. It borrows useful generative-runtime mechanics—conditioning, branching, masks, non-destructive variants, evidence-driven re-opening, staged decode, explicit state, and bounded execution—without pretending LLM sampling is image diffusion.</p>
-<h2 id="status">Status<a class="anchor" href="#status">#</a></h2>
-<p><strong>v0.3.0 skill-routing build: MOCK-RUNTIME PASS — 25/25 checks.</strong><br />
-<strong>Packed npm artifact smoke: PASS.</strong></p>
-<p>The package compiles and passes a contract-shaped mock OpenCode runtime covering plugin host adapters, CLI/process boundaries, skill discovery/routing, engine transitions, edit-mask enforcement, verification, compaction reinforcement, prompt pipes, and persistence.</p>
-<p>This is <strong>not a live-provider proof</strong>. The smoke environment had no <code>opencode</code> or <code>opencode2</code> binary, so a real GLM/DeepSeek/Kimi/Qwen/Muse/Nemotron inference turn and native OpenCode permission UI were not exercised.</p>
-<h2 id="why-this-exists">Why this exists<a class="anchor" href="#why-this-exists">#</a></h2>
+<h2 id="status">Status<a class="anchor" href="#status" aria-label="Link to Status">#</a></h2>
+<p><strong>v0.3.0 skill-routing build: LOCAL/MOCK PASS — 25/25 checks.</strong><br><strong>Packed npm artifact smoke: PASS.</strong><br><strong>Live OpenCode end-to-end smoke: PASS — <code>GOBLIN_DMT_LIVE_E2E</code>.</strong></p>
+<p>On 2026-09-10, D.M.T. completed a real provider-backed OpenCode smoke using:</p>
+<pre><code class="language-text">dmt                  0.3.0
+opencode             1.18.30
+model                tokenrouter/z-ai/glm-5.3-free
+agent                g-dmt
+skill                workspace-snapshot
+turn timeout         600s
+result               PASS  GOBLIN_DMT_LIVE_E2E
+</code></pre>
+<p>The live smoke verified:</p>
+<ul>
+<li>stable OpenCode host compatibility;</li>
+<li>project-local <code>g-dmt</code> agent discovery;</li>
+<li>packed/isolation-safe D.M.T. plugin installation;</li>
+<li>stable-host plugin import;</li>
+<li>discovery of all nine <code>dmt_*</code> plugin tools;</li>
+<li><code>SkillRouterActor</code> routing of <code>workspace-snapshot</code>;</li>
+<li>CLI activation of the skill in canonical D.M.T. state;</li>
+<li>a real provider-backed <code>g-dmt</code> turn;</li>
+<li>native OpenCode loading of the installed <code>workspace-snapshot</code> skill;</li>
+<li>model invocation of <code>dmt_state</code>;</li>
+<li>CLI → already-running plugin state propagation without restart;</li>
+<li>no tracked-worktree mutation by the provider-backed smoke;</li>
+<li>persisted skill completion in the D.M.T. ledger; and</li>
+<li>healthy OpenCode server state after the live turn.</li>
+</ul>
+<p>The package also retains its 25/25 local/mock verification and packed-artifact smoke. The live proof is intentionally read-only: it does <strong>not</strong> yet claim verification of the native OpenCode permission UI or a user-approved masked write.</p>
+<h2 id="why-this-exists">Why this exists<a class="anchor" href="#why-this-exists" aria-label="Link to Why this exists">#</a></h2>
 <pre><code class="language-text">wandering           -&gt; bounded alternate branch
 hallucinated idea   -&gt; quarantined hypothesis
 tool enthusiasm     -&gt; evidence-seeking check
@@ -31,7 +296,7 @@ long-context drift  -&gt; canonical state + resume capsule
 over-refactoring    -&gt; edit mask + mutation strength
 </code></pre>
 <p>D.M.T. does not try to erase these model tendencies with one giant prompt. It <strong>occupies them with actors</strong> and feeds the active model a small state-derived next-task contract.</p>
-<h2 id="runtime-shape">Runtime shape<a class="anchor" href="#runtime-shape">#</a></h2>
+<h2 id="runtime-shape">Runtime shape<a class="anchor" href="#runtime-shape" aria-label="Link to Runtime shape">#</a></h2>
 <pre><code class="language-text">                         USER
                           │
                   intent / authority
@@ -73,7 +338,7 @@ over-refactoring    -&gt; edit mask + mutation strength
                   decode -&gt; format -&gt; save
 </code></pre>
 <p>The active model is replaceable. Canonical engine state is not.</p>
-<h2 id="install">Install<a class="anchor" href="#install">#</a></h2>
+<h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to Install">#</a></h2>
 <pre><code class="language-bash">npm install /path/to/dmt-0.3.0.tgz
 npx dmt init
 </code></pre>
@@ -89,7 +354,7 @@ npx dmt init
 └── config.json
 </code></pre>
 <p>The old <code>stf</code> and <code>stable-text-fusion</code> executables remain compatibility aliases in v0.3.0. New documentation and automation should use <code>dmt</code>.</p>
-<h2 id="quick-start">Quick start<a class="anchor" href="#quick-start">#</a></h2>
+<h2 id="quick-start">Quick start<a class="anchor" href="#quick-start" aria-label="Link to Quick start">#</a></h2>
 <pre><code class="language-bash">dmt begin --mode develop --strength local \
   &quot;Fix the refresh race without changing the public session API&quot;
 
@@ -108,7 +373,7 @@ dmt ingest design.pdf --stdout | dmt prompt save design -
 dmt prompt load design
 dmt opencode --prompt design
 </code></pre>
-<h2 id="engine-phases">Engine phases<a class="anchor" href="#engine-phases">#</a></h2>
+<h2 id="engine-phases">Engine phases<a class="anchor" href="#engine-phases" aria-label="Link to Engine phases">#</a></h2>
 <pre><code class="language-text">START       -&gt; captured
 ENCODE      -&gt; encoded
 EXPLORE     -&gt; exploring
@@ -122,78 +387,76 @@ FORMAT      -&gt; formatted
 SAVE        -&gt; saved
 </code></pre>
 <p>Controlled reopening is allowed when evidence invalidates a decision. D.M.T. does not force fake uncertainty after convergence.</p>
-<h2 id="actors">Actors<a class="anchor" href="#actors">#</a></h2>
+<h2 id="actors">Actors<a class="anchor" href="#actors" aria-label="Link to Actors">#</a></h2>
 <table>
 <thead>
 <tr>
-  <th>Actor</th>
-  <th>Responsibility</th>
+<th>Actor</th>
+<th>Responsibility</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-  <td><code>SupervisorActor</code></td>
-  <td>Canonical phase, budget, clock, transitions, pause/abort</td>
+<tbody><tr>
+<td><code>SupervisorActor</code></td>
+<td>Canonical phase, budget, clock, transitions, pause/abort</td>
 </tr>
 <tr>
-  <td><code>ConditionActor</code></td>
-  <td>Goal, success, facts, assumptions, unknowns, references</td>
+<td><code>ConditionActor</code></td>
+<td>Goal, success, facts, assumptions, unknowns, references</td>
 </tr>
 <tr>
-  <td><code>DivergenceActor</code></td>
-  <td>Materially different candidates where ambiguity exists</td>
+<td><code>DivergenceActor</code></td>
+<td>Materially different candidates where ambiguity exists</td>
 </tr>
 <tr>
-  <td><code>ChallengerActor</code></td>
-  <td>One serious alternate when the lead is weak</td>
+<td><code>ChallengerActor</code></td>
+<td>One serious alternate when the lead is weak</td>
 </tr>
 <tr>
-  <td><code>EvidenceActor</code></td>
-  <td>Cheapest discriminating read/search/test</td>
+<td><code>EvidenceActor</code></td>
+<td>Cheapest discriminating read/search/test</td>
 </tr>
 <tr>
-  <td><code>ConstraintActor</code></td>
-  <td>Hard anchors, negatives, compatibility, strength</td>
+<td><code>ConstraintActor</code></td>
+<td>Hard anchors, negatives, compatibility, strength</td>
 </tr>
 <tr>
-  <td><code>MaskActor</code></td>
-  <td>Writable region and scope-escape detection</td>
+<td><code>MaskActor</code></td>
+<td>Writable region and scope-escape detection</td>
 </tr>
 <tr>
-  <td><code>BranchActor</code></td>
-  <td>Parent/child candidate lineage</td>
+<td><code>BranchActor</code></td>
+<td>Parent/child candidate lineage</td>
 </tr>
 <tr>
-  <td><code>MutationActor</code></td>
-  <td>Bounded post-commit edits</td>
+<td><code>MutationActor</code></td>
+<td>Bounded post-commit edits</td>
 </tr>
 <tr>
-  <td><code>VerifyActor</code></td>
-  <td>Attempts to falsify implementation claims</td>
+<td><code>VerifyActor</code></td>
+<td>Attempts to falsify implementation claims</td>
 </tr>
 <tr>
-  <td><code>DecodeActor</code></td>
-  <td>Produces the requested artifact</td>
+<td><code>DecodeActor</code></td>
+<td>Produces the requested artifact</td>
 </tr>
 <tr>
-  <td><code>FormatActor</code></td>
-  <td>Local/native formatting after semantics stabilize</td>
+<td><code>FormatActor</code></td>
+<td>Local/native formatting after semantics stabilize</td>
 </tr>
 <tr>
-  <td><code>PersistenceActor</code></td>
-  <td>Checkpoint/run/prompt persistence</td>
+<td><code>PersistenceActor</code></td>
+<td>Checkpoint/run/prompt persistence</td>
 </tr>
 <tr>
-  <td><code>SkillRouterActor</code></td>
-  <td>Routes one appropriate installed skill</td>
+<td><code>SkillRouterActor</code></td>
+<td>Routes one appropriate installed skill</td>
 </tr>
 <tr>
-  <td><code>UserGateActor</code></td>
-  <td>Boundary the model cannot impersonate</td>
+<td><code>UserGateActor</code></td>
+<td>Boundary the model cannot impersonate</td>
 </tr>
-</tbody>
-</table>
-<h2 id="skill-routing">Skill routing<a class="anchor" href="#skill-routing">#</a></h2>
+</tbody></table>
+<h2 id="skill-routing">Skill routing<a class="anchor" href="#skill-routing" aria-label="Link to Skill routing">#</a></h2>
 <p>OpenCode skills are <strong>not pre-injected</strong> into the agent. D.M.T. keeps a compact routing manifest, chooses a skill only for a concrete bounded job, and lets OpenCode load its body on demand.</p>
 <pre><code class="language-text">task + phase + actually available skill IDs
                     │
@@ -219,7 +482,7 @@ SAVE        -&gt; saved
         canonical engine evidence
 </code></pre>
 <p>A skill is a capability, not authority. It cannot expand the edit mask, self-grant commit approval, enable external sync, authorize <code>git push</code>, or promote speculation to fact.</p>
-<h3 id="current-skill-pack-snapshot">Current skill-pack snapshot<a class="anchor" href="#current-skill-pack-snapshot">#</a></h3>
+<h3 id="current-skill-pack-snapshot">Current skill-pack snapshot<a class="anchor" href="#current-skill-pack-snapshot" aria-label="Link to Current skill-pack snapshot">#</a></h3>
 <p>v0.3.0 was built from the supplied <code>opencode-skillz-master(2).zip</code>:</p>
 <pre><code class="language-text">SHA-256:
 f3949bc7e88805d62814d209084481567de22ee4ba8b3939f948a6f2fa5f7d02
@@ -230,147 +493,145 @@ f3949bc7e88805d62814d209084481567de22ee4ba8b3939f948a6f2fa5f7d02
 21 curated routable descriptors
 </code></pre>
 <p>Taxonomy-only names are never treated as callable skills just because an index mentions them.</p>
-<h3 id="when-where-and-how-the-current-skills-are-used">When, where, and how the current skills are used<a class="anchor" href="#when-where-and-how-the-current-skills-are-used">#</a></h3>
+<h3 id="when-where-and-how-the-current-skills-are-used">When, where, and how the current skills are used<a class="anchor" href="#when-where-and-how-the-current-skills-are-used" aria-label="Link to When, where, and how the current skills are used">#</a></h3>
 <table>
 <thead>
 <tr>
-  <th>Skill</th>
-  <th>Actor / phase</th>
-  <th>When</th>
-  <th>How / boundary</th>
+<th>Skill</th>
+<th>Actor / phase</th>
+<th>When</th>
+<th>How / boundary</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-  <td><code>workspace-snapshot</code></td>
-  <td><code>SnapshotActor</code> · CAPTURE/GROUND</td>
-  <td>archive/repo/file identity, handoff, drift, resume</td>
-  <td>deterministic snapshot; never execute target merely to inspect</td>
+<tbody><tr>
+<td><code>workspace-snapshot</code></td>
+<td><code>SnapshotActor</code> · CAPTURE/GROUND</td>
+<td>archive/repo/file identity, handoff, drift, resume</td>
+<td>deterministic snapshot; never execute target merely to inspect</td>
 </tr>
 <tr>
-  <td><code>zero-review-graph</code></td>
-  <td><code>GraphEvidenceActor</code> · GROUND/VERIFY</td>
-  <td>Go/Rust/ZeroLang review/debug</td>
-  <td>graph-first retrieval/blast radius; graph is evidence, not proof</td>
+<td><code>zero-review-graph</code></td>
+<td><code>GraphEvidenceActor</code> · GROUND/VERIFY</td>
+<td>Go/Rust/ZeroLang review/debug</td>
+<td>graph-first retrieval/blast radius; graph is evidence, not proof</td>
 </tr>
 <tr>
-  <td><code>prompt-dev-formalization</code></td>
-  <td><code>FormalizationActor</code> · CONDITION/CONSTRAIN</td>
-  <td>loose dev intent needs a build contract</td>
-  <td>preserve provenance and exact requirement disposition</td>
+<td><code>prompt-dev-formalization</code></td>
+<td><code>FormalizationActor</code> · CONDITION/CONSTRAIN</td>
+<td>loose dev intent needs a build contract</td>
+<td>preserve provenance and exact requirement disposition</td>
 </tr>
 <tr>
-  <td><code>research-module</code></td>
-  <td><code>ResearchCorpusActor</code> · GROUND/SAVE</td>
-  <td>explicitly requested research corpus</td>
-  <td><strong>explicit/ask-gated</strong>; preserve source precedence and paired metadata</td>
+<td><code>research-module</code></td>
+<td><code>ResearchCorpusActor</code> · GROUND/SAVE</td>
+<td>explicitly requested research corpus</td>
+<td><strong>explicit/ask-gated</strong>; preserve source precedence and paired metadata</td>
 </tr>
 <tr>
-  <td><code>go-wiki-memory</code></td>
-  <td><code>ReadOnlyMemoryActor</code> · CAPTURE/GROUND</td>
-  <td>shared/local Go-Wiki context is relevant</td>
-  <td>read-only context; never execution authority</td>
+<td><code>go-wiki-memory</code></td>
+<td><code>ReadOnlyMemoryActor</code> · CAPTURE/GROUND</td>
+<td>shared/local Go-Wiki context is relevant</td>
+<td>read-only context; never execution authority</td>
 </tr>
 <tr>
-  <td><code>dynamic-build-ledger</code></td>
-  <td><code>LedgerActor</code> · governed lifecycle</td>
-  <td>existing DBL or explicit init</td>
-  <td>skill's own init gate remains binding; never auto-init</td>
+<td><code>dynamic-build-ledger</code></td>
+<td><code>LedgerActor</code> · governed lifecycle</td>
+<td>existing DBL or explicit init</td>
+<td>skill&#39;s own init gate remains binding; never auto-init</td>
 </tr>
 <tr>
-  <td><code>update-ledger-compact</code></td>
-  <td><code>CompactionLedgerActor</code> · pre-compaction</td>
-  <td>active authorized DBL before compaction</td>
-  <td>persist first, compact, then reground</td>
+<td><code>update-ledger-compact</code></td>
+<td><code>CompactionLedgerActor</code> · pre-compaction</td>
+<td>active authorized DBL before compaction</td>
+<td>persist first, compact, then reground</td>
 </tr>
 <tr>
-  <td><code>make-an-opencode-plugin</code></td>
-  <td><code>ExtensionBuilderActor</code> · GROUND→VERIFY</td>
-  <td>OpenCode plugin/tool/hybrid work</td>
-  <td>version-aware host/API check; least-powerful correct extension</td>
+<td><code>make-an-opencode-plugin</code></td>
+<td><code>ExtensionBuilderActor</code> · GROUND→VERIFY</td>
+<td>OpenCode plugin/tool/hybrid work</td>
+<td>version-aware host/API check; least-powerful correct extension</td>
 </tr>
 <tr>
-  <td><code>make-an-opencode-skill</code></td>
-  <td><code>SkillBuilderActor</code> · GROUND→VERIFY</td>
-  <td>create/repair/audit an OpenCode skill</td>
-  <td>validate discovery/frontmatter and loading</td>
+<td><code>make-an-opencode-skill</code></td>
+<td><code>SkillBuilderActor</code> · GROUND→VERIFY</td>
+<td>create/repair/audit an OpenCode skill</td>
+<td>validate discovery/frontmatter and loading</td>
 </tr>
 <tr>
-  <td><code>make-a-new-local-repo</code></td>
-  <td><code>RepositoryBootstrapActor</code> · COMMIT→VERIFY</td>
-  <td>explicit repo bootstrap/adoption</td>
-  <td>local work; external push remains separately authorized</td>
+<td><code>make-a-new-local-repo</code></td>
+<td><code>RepositoryBootstrapActor</code> · COMMIT→VERIFY</td>
+<td>explicit repo bootstrap/adoption</td>
+<td>local work; external push remains separately authorized</td>
 </tr>
 <tr>
-  <td><code>local-ai-runtime-optimizer</code></td>
-  <td><code>RuntimeOptimizerActor</code> · GROUND→VERIFY</td>
-  <td>local AI machine/runtime audit</td>
-  <td>OBSERVE→REVIEW→EXECUTE→VERIFY with high-impact gates</td>
+<td><code>local-ai-runtime-optimizer</code></td>
+<td><code>RuntimeOptimizerActor</code> · GROUND→VERIFY</td>
+<td>local AI machine/runtime audit</td>
+<td>OBSERVE→REVIEW→EXECUTE→VERIFY with high-impact gates</td>
 </tr>
 <tr>
-  <td><code>make-build-ledger</code></td>
-  <td><code>LegacyLedgerReaderActor</code> · GROUND</td>
-  <td>older ledger compatibility</td>
-  <td><strong>explicit/read-only</strong>; prefer <code>dynamic-build-ledger</code></td>
+<td><code>make-build-ledger</code></td>
+<td><code>LegacyLedgerReaderActor</code> · GROUND</td>
+<td>older ledger compatibility</td>
+<td><strong>explicit/read-only</strong>; prefer <code>dynamic-build-ledger</code></td>
 </tr>
 <tr>
-  <td><code>i-have-adhd</code></td>
-  <td><code>OutputStyleActor</code> · presentation</td>
-  <td>user explicitly activates it</td>
-  <td><strong>explicit/ask-gated</strong>; never infer from user traits</td>
+<td><code>i-have-adhd</code></td>
+<td><code>OutputStyleActor</code> · presentation</td>
+<td>user explicitly activates it</td>
+<td><strong>explicit/ask-gated</strong>; never infer from user traits</td>
 </tr>
 <tr>
-  <td><code>mr-meeseeks</code></td>
-  <td><code>ComedyOverlayActor</code> · presentation</td>
-  <td>user explicitly requests persona/comedy mode</td>
-  <td><strong>explicit/ask-gated</strong>; no authority effect</td>
+<td><code>mr-meeseeks</code></td>
+<td><code>ComedyOverlayActor</code> · presentation</td>
+<td>user explicitly requests persona/comedy mode</td>
+<td><strong>explicit/ask-gated</strong>; no authority effect</td>
 </tr>
 <tr>
-  <td><code>planning-brainstorm-light-research</code></td>
-  <td><code>IncubationActor</code> · CAPTURE→EXPLORE</td>
-  <td>early idea-space/light research</td>
-  <td>installed-only; preserve <code>idea != decision</code></td>
+<td><code>planning-brainstorm-light-research</code></td>
+<td><code>IncubationActor</code> · CAPTURE→EXPLORE</td>
+<td>early idea-space/light research</td>
+<td>installed-only; preserve <code>idea != decision</code></td>
 </tr>
 <tr>
-  <td><code>dev-planning-research</code></td>
-  <td><code>DevelopmentResearchActor</code> · GROUND→COMMIT</td>
-  <td>selected idea needs feasibility/architecture</td>
-  <td>installed-only; separate intent/proposal/authorization</td>
+<td><code>dev-planning-research</code></td>
+<td><code>DevelopmentResearchActor</code> · GROUND→COMMIT</td>
+<td>selected idea needs feasibility/architecture</td>
+<td>installed-only; separate intent/proposal/authorization</td>
 </tr>
 <tr>
-  <td><code>project-review-suggestions</code></td>
-  <td><code>ProjectReviewActor</code> · GROUND/VERIFY</td>
-  <td>active project advisory review</td>
-  <td>installed-only; suggestions do not self-approve</td>
+<td><code>project-review-suggestions</code></td>
+<td><code>ProjectReviewActor</code> · GROUND/VERIFY</td>
+<td>active project advisory review</td>
+<td>installed-only; suggestions do not self-approve</td>
 </tr>
 <tr>
-  <td><code>public-release-finalizer</code></td>
-  <td><code>ReleaseGateActor</code> · VERIFY/SAVE</td>
-  <td>public-release preparation</td>
-  <td>installed-only; readiness does not authorize publish</td>
+<td><code>public-release-finalizer</code></td>
+<td><code>ReleaseGateActor</code> · VERIFY/SAVE</td>
+<td>public-release preparation</td>
+<td>installed-only; readiness does not authorize publish</td>
 </tr>
 <tr>
-  <td><code>build-tt-handoff</code></td>
-  <td><code>HandoffActor</code> · boundary/SAVE</td>
-  <td>model/session/builder boundary</td>
-  <td>installed-only; durable evidence/authority/next work</td>
+<td><code>build-tt-handoff</code></td>
+<td><code>HandoffActor</code> · boundary/SAVE</td>
+<td>model/session/builder boundary</td>
+<td>installed-only; durable evidence/authority/next work</td>
 </tr>
 <tr>
-  <td><code>build-tt-rake</code></td>
-  <td><code>RetrospectiveActor</code> · post-VERIFY</td>
-  <td>retrospective/scar map</td>
-  <td>installed-only/read-only; no retroactive truth</td>
+<td><code>build-tt-rake</code></td>
+<td><code>RetrospectiveActor</code> · post-VERIFY</td>
+<td>retrospective/scar map</td>
+<td>installed-only/read-only; no retroactive truth</td>
 </tr>
 <tr>
-  <td><code>build-tt-adhd</code></td>
-  <td><code>DivergentTestimonyActor</code> · late EXPLORE/handoff</td>
-  <td>preserve divergent architectural intuition</td>
-  <td>installed-only; testimony stays separate from truth</td>
+<td><code>build-tt-adhd</code></td>
+<td><code>DivergentTestimonyActor</code> · late EXPLORE/handoff</td>
+<td>preserve divergent architectural intuition</td>
+<td>installed-only; testimony stays separate from truth</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>The machine-readable inventory is <code>assets/skill-routing/current-skills.json</code>; the full routing contract is <code>docs/SKILL-ROUTING.md</code>.</p>
-<h3 id="recommended-sequential-compositions">Recommended sequential compositions<a class="anchor" href="#recommended-sequential-compositions">#</a></h3>
+<h3 id="recommended-sequential-compositions">Recommended sequential compositions<a class="anchor" href="#recommended-sequential-compositions" aria-label="Link to Recommended sequential compositions">#</a></h3>
 <pre><code class="language-text">workspace-snapshot
   -&gt; zero-review-graph
 
@@ -387,7 +648,7 @@ dynamic-build-ledger
   -&gt; update-ledger-compact
 </code></pre>
 <p>Finish/fail one skill, distill its output to canonical state/evidence, then load the next. Do not inject multiple full skill bodies simultaneously.</p>
-<h3 id="explicit-only-policy">Explicit-only policy<a class="anchor" href="#explicit-only-policy">#</a></h3>
+<h3 id="explicit-only-policy">Explicit-only policy<a class="anchor" href="#explicit-only-policy" aria-label="Link to Explicit-only policy">#</a></h3>
 <p><code>g-dmt</code> places structural <code>ask</code> gates around:</p>
 <ul>
 <li><code>research-module</code></li>
@@ -396,7 +657,7 @@ dynamic-build-ledger
 <li><code>make-build-ledger</code></li>
 </ul>
 <p>This matters because one supplied skill includes frontmatter from an adjacent skill ecosystem. D.M.T. does not depend on unknown OpenCode fields to enforce an explicit-only policy.</p>
-<h2 id="plugin-tools">Plugin tools<a class="anchor" href="#plugin-tools">#</a></h2>
+<h2 id="plugin-tools">Plugin tools<a class="anchor" href="#plugin-tools" aria-label="Link to Plugin tools">#</a></h2>
 <pre><code class="language-text">dmt_begin
 dmt_state
 dmt_transition
@@ -409,35 +670,33 @@ dmt_sync
 </code></pre>
 <p><code>dmt_skill_route</code> uses task/phase plus the available skill set. The OpenCode 2 adapter can filter against its advertised host skill list. A manifest entry cannot manufacture an unavailable skill.</p>
 <p>Only one skill may be active in canonical state at a time.</p>
-<h2 id="mutation-strength-and-code-inpainting">Mutation strength and code inpainting<a class="anchor" href="#mutation-strength-and-code-inpainting">#</a></h2>
+<h2 id="mutation-strength-and-code-inpainting">Mutation strength and code inpainting<a class="anchor" href="#mutation-strength-and-code-inpainting" aria-label="Link to Mutation strength and code inpainting">#</a></h2>
 <table>
 <thead>
 <tr>
-  <th>Strength</th>
-  <th>Meaning</th>
+<th>Strength</th>
+<th>Meaning</th>
 </tr>
 </thead>
-<tbody>
-<tr>
-  <td><code>surface</code></td>
-  <td>presentation/text/formatting-level change</td>
+<tbody><tr>
+<td><code>surface</code></td>
+<td>presentation/text/formatting-level change</td>
 </tr>
 <tr>
-  <td><code>local</code></td>
-  <td>narrow function/file implementation</td>
+<td><code>local</code></td>
+<td>narrow function/file implementation</td>
 </tr>
 <tr>
-  <td><code>module</code></td>
-  <td>coordinated bounded-subsystem change</td>
+<td><code>module</code></td>
+<td>coordinated bounded-subsystem change</td>
 </tr>
 <tr>
-  <td><code>rewrite</code></td>
-  <td>intentionally broad redesign, still anchor/mask-bound</td>
+<td><code>rewrite</code></td>
+<td>intentionally broad redesign, still anchor/mask-bound</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>The edit mask answers <strong>where</strong> mutation may occur. Read-only evidence gathering can leave the mask; mutation cannot. <code>apply_patch</code> targets are parsed and checked, and an unresolvable masked patch fails closed.</p>
-<h2 id="user-controlled-boundaries">User-controlled boundaries<a class="anchor" href="#user-controlled-boundaries">#</a></h2>
+<h2 id="user-controlled-boundaries">User-controlled boundaries<a class="anchor" href="#user-controlled-boundaries" aria-label="Link to User-controlled boundaries">#</a></h2>
 <p>The model/skills cannot manufacture approval for:</p>
 <pre><code class="language-text">commit gate
 scope expansion
@@ -452,7 +711,7 @@ irreversible destructive effects
 <pre><code class="language-bash">dmt approve commit
 </code></pre>
 <p>The long-lived plugin refreshes canonical disk state so this approval is observed without requiring a host restart.</p>
-<h2 id="prompt-ingestion-and-persistence">Prompt ingestion and persistence<a class="anchor" href="#prompt-ingestion-and-persistence">#</a></h2>
+<h2 id="prompt-ingestion-and-persistence">Prompt ingestion and persistence<a class="anchor" href="#prompt-ingestion-and-persistence" aria-label="Link to Prompt ingestion and persistence">#</a></h2>
 <pre><code class="language-bash">dmt ingest architecture.pdf --stdout | dmt prompt save architecture -
 dmt prompt load architecture
 dmt opencode --prompt architecture
@@ -463,7 +722,7 @@ dmt opencode --prompt architecture
 <pre><code class="language-bash">dmt push prompt architecture --remote ~/my-dmt-store
 dmt pull prompt architecture --remote ~/my-dmt-store
 </code></pre>
-<h2 id="compaction-and-model-handoff">Compaction and model handoff<a class="anchor" href="#compaction-and-model-handoff">#</a></h2>
+<h2 id="compaction-and-model-handoff">Compaction and model handoff<a class="anchor" href="#compaction-and-model-handoff" aria-label="Link to Compaction and model handoff">#</a></h2>
 <p>Compaction preserves <strong>state, not transcript</strong>: run/phase, goal, selected branch, anchors, edit mask, strength, verification, residual unknowns, active skill, and next contract.</p>
 <p>A model handoff is a worker replacement:</p>
 <pre><code class="language-text">checkpoint
@@ -472,23 +731,47 @@ dmt pull prompt architecture --remote ~/my-dmt-store
   -&gt; reload canonical state
   -&gt; continue ENGINE_PROMPT
 </code></pre>
-<h2 id="opencode-integration">OpenCode integration<a class="anchor" href="#opencode-integration">#</a></h2>
+<h2 id="opencode-integration">OpenCode integration<a class="anchor" href="#opencode-integration" aria-label="Link to OpenCode integration">#</a></h2>
 <p>Goblin-D.M.T. is model-unpinned so the selected coding model remains replaceable. The package exposes:</p>
 <pre><code class="language-text">server(ctx)   # stable-host adapter
 setup(ctx)    # OpenCode 2 adapter
 </code></pre>
 <p>The project agent uses stable-compatible frontmatter as the common denominator. Skills remain lazy-loaded native capabilities.</p>
-<h2 id="verification">Verification<a class="anchor" href="#verification">#</a></h2>
-<p>v0.3.0 passes <strong>25/25 local/mock checks</strong> spanning compile/core invariants, cross-process user approval, edit-mask enforcement, cached graph evaluation, both host adapters, skill inventory/routing, explicit-only behavior, missing-skill filtering, serialized skill lifecycle, renamed CLI/init, MarkItDown-style piping, prompt persistence, argv-safe OpenCode launching, and package contents. A separate packed-artifact smoke also extracted <code>dmt-0.3.0.tgz</code> into a blank workspace and successfully ran <code>init → begin → skill route → skill activate → state → skill complete → state</code> from the packaged CLI.</p>
-<p>See <a href="docs/SMOKE-TEST.md"><code>docs/SMOKE-TEST.md</code></a> for the exact boundary of this claim.</p>
-<h2 id="design-lineage">Design lineage<a class="anchor" href="#design-lineage">#</a></h2>
+<h2 id="verification">Verification<a class="anchor" href="#verification" aria-label="Link to Verification">#</a></h2>
+<p>v0.3.0 passes <strong>25/25 local/mock checks</strong> spanning compile/core invariants, cross-process user approval, edit-mask enforcement, cached graph evaluation, both host adapters, skill inventory/routing, explicit-only behavior, missing-skill filtering, serialized skill lifecycle, renamed CLI/init, MarkItDown-style piping, prompt persistence, argv-safe OpenCode launching, and package contents.</p>
+<p>A separate packed-artifact smoke extracted <code>dmt-0.3.0.tgz</code> into a blank workspace and successfully ran:</p>
+<pre><code class="language-text">init
+  -&gt; begin
+  -&gt; skill route
+  -&gt; skill activate
+  -&gt; state
+  -&gt; skill complete
+  -&gt; state
+</code></pre>
+<p>The real OpenCode smoke then exercised the packaged runtime against OpenCode <code>1.18.30</code> with <code>tokenrouter/z-ai/glm-5.3-free</code>:</p>
+<pre><code class="language-bash">DMT_TURN_TIMEOUT=600 ./scripts/smoke-opencode-live.sh
+</code></pre>
+<p>Expected terminal checkpoint:</p>
+<pre><code class="language-text">PASS  server API discovers all 9 Goblin-D.M.T. plugin tools
+PASS  CLI activated workspace-snapshot in canonical DMT state
+PASS  provider-backed g-dmt turn loaded workspace-snapshot and called dmt_state
+PASS  live plugin observed CLI-owned active skill without server restart
+PASS  provider-backed smoke left tracked repository content unchanged
+PASS  workspace-snapshot completion persisted in DMT ledger
+PASS  OpenCode server remained healthy after live DMT turn
+
+PASS  GOBLIN_DMT_LIVE_E2E
+</code></pre>
+<p>This raises the verified boundary from mock-only integration to a real OpenCode + real provider + native skill + cross-process canonical-state end-to-end path.</p>
+<p>See <a href="https://github.com/es-3581100/Goblin-D.M.T./blob/main/docs/SMOKE-TEST.md"><code>docs/SMOKE-TEST.md</code></a> for the local/mock contract. The live-provider evidence above should be kept in sync with <code>scripts/smoke-opencode-live.sh</code>.</p>
+<h2 id="design-lineage">Design lineage<a class="anchor" href="#design-lineage" aria-label="Link to Design lineage">#</a></h2>
 <ul>
 <li><strong>Dream Textures:</strong> host/backend separation, worker actors, validation, cancellation, execution graphs, cached dependencies.</li>
 <li><strong>NanoBananaEditor:</strong> generate/edit/mask modes, references, non-destructive variants and parent-linked history.</li>
 <li><strong>Verse:</strong> effects, failure as control flow, speculative rollback, structured concurrency.</li>
 <li><strong>Text-Fusion:</strong> direct pre-rename diffusion-inspired runtime lineage.</li>
 </ul>
-<h2 id="brand-interface-principle">Brand/interface principle<a class="anchor" href="#brand-interface-principle">#</a></h2>
+<h2 id="brand-interface-principle">Brand/interface principle<a class="anchor" href="#brand-interface-principle" aria-label="Link to Brand/interface principle">#</a></h2>
 <pre><code class="language-text">goblins         = bounded exploratory actors
 workbenches     = candidate branches
 specimens       = evidence
@@ -500,9 +783,10 @@ inspection      = verification
 </code></pre>
 <p><strong>SOURCE TRUTH FIRST. BRAND SECOND. PRESENTATION THIRD.</strong></p>
 <p><strong>NO EXPANSION WITHOUT VALIDATION.</strong></p>
-<h2 id="repository-layout">Repository layout<a class="anchor" href="#repository-layout">#</a></h2>
+<h2 id="repository-layout">Repository layout<a class="anchor" href="#repository-layout" aria-label="Link to Repository layout">#</a></h2>
 <pre><code class="language-text">.
 ├── assets/
+│   ├── goblin-dmt-banner.png
 │   ├── opencode/
 │   │   ├── agents/g-dmt.md
 │   │   └── skills/g-dmt/SKILL.md
@@ -520,14 +804,67 @@ inspection      = verification
 │       ├── runtime.ts
 │       ├── skills.ts
 │       └── ...
+├── scripts/
+│   └── smoke-opencode-live.sh
 ├── test/
 ├── README.md
 └── package.json
 </code></pre>
-<h2 id="release-boundary">Release boundary<a class="anchor" href="#release-boundary">#</a></h2>
-<p>A D.M.T. <code>PASS</code> means only that the stated checks actually ran and passed. It does not imply a provider, permission UI, remote service, registry publication, or deployment was tested when it was not.</p>
-<p>The next confidence step is a real OpenCode workspace smoke with one inexpensive model: prove native skill discovery, route one read-only skill, then exercise one user-approved masked edit.</p>
-<hr />
+<h2 id="if-you-liked-goblin-d-m-t">If you liked Goblin-D.M.T.<a class="anchor" href="#if-you-liked-goblin-d-m-t" aria-label="Link to If you liked Goblin-D.M.T.">#</a></h2>
+<p>If this project was useful or interesting, visit <strong><a href="https://github.com/es-3581100/Goblin-Logic-Manager">Goblin-Logic-Manager</a></strong> — another Goblin project focused on disciplined OpenCode development behavior, model-specific tuning overlays, reproducible agent rendering, and validation-gated expansion.</p>
+<h2 id="release-boundary">Release boundary<a class="anchor" href="#release-boundary" aria-label="Link to Release boundary">#</a></h2>
+<p>A D.M.T. <code>PASS</code> means only that the stated checks actually ran and passed.</p>
+<p>For v0.3.0, the verified boundary now includes one real provider-backed OpenCode end-to-end run with:</p>
+<pre><code class="language-text">OpenCode 1.18.30
+tokenrouter/z-ai/glm-5.3-free
+g-dmt
+workspace-snapshot
+all 9 dmt_* tools
+CLI -&gt; live-plugin state refresh
+ledger completion persistence
+tracked-worktree immutability
+post-turn server health
+</code></pre>
+<p>It still does <strong>not</strong> imply that every model/provider, the native OpenCode permission UI, remote prompt stores, registry publication, deployment, release publication, or an irreversible action has been tested.</p>
+<p>The next confidence step is one deliberately bounded, user-approved masked edit: prove the permission/approval boundary, constrain the edit mask, execute the smallest mutation, verify the resulting diff, and confirm rollback/evidence behavior.</p>
+<hr>
 <p><strong>Goblin-D.M.T. — Goblin-Dynamic.Meta.Transfusion</strong></p>
 <p><em>The goblins explore. The engine remembers. Evidence decides. The user controls the transfusion.</em></p>
-<footer>Rendered from README.md · SHA-256 <code>4c721ae9e4bf9f031115d92cab669e3dc4d64c7236fa91522b165ffb93aa984f</code><br>This HTML is a view, not a competing source of truth.</footer></main><aside class="rail"><div class="meter"><b>Source</b>README.md</div><div class="meter"><b>Package</b>dmt@0.3.0</div><div class="meter"><b>Skill snapshot</b>14 native · 7 workflow · 23 taxonomy</div><div class="meter"><b>Automated smoke</b><span class="pass">25/25 PASS</span></div><div class="meter"><b>Packed artifact</b><span class="pass">PASS</span></div><div class="meter"><b>Live provider</b><span class="warn">NOT PROVEN</span></div></aside></div><script>document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.className='copy';b.type='button';b.textContent='copy';b.onclick=async()=>{try{await navigator.clipboard.writeText(pre.innerText.replace(/^copy\\n/,''));b.textContent='copied';setTimeout(()=>b.textContent='copy',900)}catch{b.textContent='select'}};pre.appendChild(b)})</script></body></html>
+<p><em>Banner image by GPT-5.6 Sol (High).</em></p>
+
+    </article>
+    <footer>
+      Generated from <code>README.md</code> by <code>scripts/render-readme.mjs</code>.<br>
+      The GitHub README remains the portable source surface; this page is its dynamic presentation surface.
+    </footer>
+  </main>
+  <aside class="rail" aria-label="Build provenance">
+    <div class="meter"><span>PACKAGE</span><b>dmt 0.3.0</b></div>
+    <div class="meter"><span>LIVE CHECKPOINT</span><b class="pass">LIVE E2E PASS</b></div>
+    <div class="meter"><span>GENERATED</span><b>2026-09-10T21:55:42.917Z</b></div>
+    <div class="meter"><span>README SHA-256</span><b class="hash">34536fec1ee0699ca90d19348b71587f4a06f086b557ea497875924b7f6c9630</b></div>
+    <div class="meter"><span>AUTHORITY</span><b>README.md</b></div>
+  </aside>
+</div>
+<script>
+for (const pre of document.querySelectorAll("pre")) {
+  const button = document.createElement("button")
+  button.className = "copy"
+  button.type = "button"
+  button.textContent = "copy"
+  button.addEventListener("click", async () => {
+    const text = pre.querySelector("code")?.innerText ?? pre.innerText
+    try {
+      await navigator.clipboard.writeText(text)
+      button.textContent = "copied"
+      setTimeout(() => button.textContent = "copy", 1200)
+    } catch {
+      button.textContent = "blocked"
+      setTimeout(() => button.textContent = "copy", 1200)
+    }
+  })
+  pre.appendChild(button)
+}
+</script>
+</body>
+</html>
