@@ -218,6 +218,7 @@ footer{
 <a class="nav-l3" href="#recommended-sequential-compositions">Recommended sequential compositions</a>
 <a class="nav-l3" href="#explicit-only-policy">Explicit-only policy</a>
 <a class="nav-l2" href="#plugin-tools">Plugin tools</a>
+<a class="nav-l3" href="#ledger-self-consistency-gate">Ledger self-consistency gate</a>
 <a class="nav-l2" href="#mutation-strength-and-code-inpainting">Mutation strength and code inpainting</a>
 <a class="nav-l2" href="#user-controlled-boundaries">User-controlled boundaries</a>
 <a class="nav-l2" href="#prompt-ingestion-and-persistence">Prompt ingestion and persistence</a>
@@ -670,6 +671,27 @@ dmt_sync
 </code></pre>
 <p><code>dmt_skill_route</code> uses task/phase plus the available skill set. The OpenCode 2 adapter can filter against its advertised host skill list. A manifest entry cannot manufacture an unavailable skill.</p>
 <p>Only one skill may be active in canonical state at a time.</p>
+<h3 id="ledger-self-consistency-gate">Ledger self-consistency gate<a class="anchor" href="#ledger-self-consistency-gate" aria-label="Link to Ledger self-consistency gate">#</a></h3>
+<p>Build ledgers have a small mechanical pre-save check. When an artifact contains both a
+<code>Classification summary</code> table and an <code>Evidence table</code>, D.M.T. recomputes
+<code>complete</code>, <code>partial</code>, <code>blocked</code>, <code>not_started</code>, and <code>unknown</code> counts from the evidence
+rows and compares them with the declared summary.</p>
+<pre><code class="language-text">evidence table rows
+        ↓
+recompute status counts
+        ↓
+compare declared summary
+   ┌────┴────┐
+ PASS      FAIL
+   │          │
+FORMAT/SAVE   └─&gt; repair summary only, then retry
+</code></pre>
+<p>The gate deliberately does <strong>not</strong> judge whether a completion claim is true. Evidence
+quality remains a verification problem. Its job is narrower: catch arithmetic and
+bookkeeping drift cheaply before persistence.</p>
+<p>D.M.T. also keeps observed failures intact when later evidence changes the
+interpretation: a failure under load followed by an isolated pass means the regression
+is <strong>not established</strong>; it does not mean the original failure never happened.</p>
 <h2 id="mutation-strength-and-code-inpainting">Mutation strength and code inpainting<a class="anchor" href="#mutation-strength-and-code-inpainting" aria-label="Link to Mutation strength and code inpainting">#</a></h2>
 <table>
 <thead>
@@ -841,8 +863,8 @@ post-turn server health
   <aside class="rail" aria-label="Build provenance">
     <div class="meter"><span>PACKAGE</span><b>dmt 0.3.0</b></div>
     <div class="meter"><span>LIVE CHECKPOINT</span><b class="pass">LIVE E2E PASS</b></div>
-    <div class="meter"><span>GENERATED</span><b>2026-09-10T21:55:42.917Z</b></div>
-    <div class="meter"><span>README SHA-256</span><b class="hash">34536fec1ee0699ca90d19348b71587f4a06f086b557ea497875924b7f6c9630</b></div>
+    <div class="meter"><span>GENERATED</span><b>2026-09-11T03:20:54.496Z</b></div>
+    <div class="meter"><span>README SHA-256</span><b class="hash">cb161ab68102e083cf0b9ce93389212f16c49ac7505edcd080d6c23a7379449f</b></div>
     <div class="meter"><span>AUTHORITY</span><b>README.md</b></div>
   </aside>
 </div>

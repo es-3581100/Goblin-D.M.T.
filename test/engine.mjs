@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { MachineActor, LazyGraph } from "../dist/engine/index.js"
+import { MachineActor, LazyGraph, validateLedgerConsistency } from "../dist/engine/index.js"
 
 test("state machine is phase-bound and hash-chained", async () => {
   const m = new MachineActor()
@@ -15,6 +15,39 @@ test("state machine is phase-bound and hash-chained", async () => {
   assert.equal(s.phase, "decoded")
   assert.equal(s.ledger.length, 7)
   assert.notEqual(s.ledger.at(-1).hash, s.ledger.at(-2).hash)
+
+  const badLedger = `# Build Ledger
+
+## Classification summary
+
+| status | count |
+|---|---:|
+| complete | 1 |
+| partial | 0 |
+| blocked | 0 |
+| not_started | 0 |
+| unknown | 0 |
+
+Counts: 1 items.
+
+## Evidence table
+
+| # | item | status | evidence |
+|---|---|---|---|
+| 1 | parser | complete | test green |
+| 2 | docs | complete | docs present |
+`
+  const bad = validateLedgerConsistency(badLedger)
+  assert.equal(bad.applicable, true)
+  assert.equal(bad.ok, false)
+  assert.equal(bad.observed.complete, 2)
+  assert.match(bad.mismatches.join("\n"), /complete: declared 1, observed 2/)
+  assert.match(bad.mismatches.join("\n"), /total: declared 1, observed 2/)
+
+  const repaired = validateLedgerConsistency(
+    badLedger.replace("| complete | 1 |", "| complete | 2 |").replace("Counts: 1 items.", "Counts: 2 items.")
+  )
+  assert.equal(repaired.ok, true)
 })
 
 test("debug/develop require execute+verify before decode", async () => {

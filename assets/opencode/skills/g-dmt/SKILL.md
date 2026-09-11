@@ -88,6 +88,11 @@ Only debug/develop. Mutate inside the committed edit mask. If evidence requires 
 
 Run concrete tests/checks. Record commands and outcomes. Confidence percentages do not substitute for evidence.
 
+Preserve observed failures even when a later rerun passes. A later pass may narrow the
+interpretation, but it does not erase the earlier observation. Prefer language such as
+"failed under load, passed in isolation; regression not established" over silently
+normalizing a red result into a pass or asserting a flake without evidence.
+
 ### DECODE
 
 Produce the requested artifact. Keep decisions, evidence, residual risk, and next action; omit private reasoning transcripts. Submit `decoded` in the DECODE patch.
@@ -99,6 +104,12 @@ Use `dmt_format` or the CLI formatter. Preserve semantics. Submit `formatted` in
 ### SAVE
 
 Use `dmt_checkpoint` / SAVE. Reusable prompts may be stored with `dmt_prompt_store`. Agent remote sync is disabled by default; do not work around that. User-controlled CLI `dmt push` / `dmt pull` remains available.
+
+For build-ledger-shaped Markdown containing both `Classification summary` and
+`Evidence table`, D.M.T. mechanically recomputes status counts before FORMAT/SAVE.
+If the declared summary disagrees with evidence rows, repair the **summary only** and
+retry. Never rewrite evidence rows merely to make the arithmetic pass. This gate checks
+bookkeeping consistency, not whether the underlying evidence is semantically true.
 
 ## User skill routing
 

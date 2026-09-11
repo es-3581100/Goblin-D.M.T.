@@ -7,6 +7,7 @@ import { formatOutput, type FormatProfile } from "./format.js"
 import { LazyGraph } from "./graph.js"
 import type { BeginInput, StatePatch } from "./machine.js"
 import { routeSkills, type SkillRouteInput } from "./skills.js"
+import { assertLedgerConsistency } from "./ledger-consistency.js"
 import type { STFConfig, STFEvent, STFRunState } from "./types.js"
 
 export class StableTextFusionRuntime {
@@ -54,6 +55,19 @@ export class StableTextFusionRuntime {
         const decoded = patch.decoded ?? current.latent.decoded
         if (decoded) patch.formatted = formatOutput(decoded, "markdown")
       }
+
+      // Build-ledger bookkeeping is mechanically checked before it can advance
+      // through FORMAT or SAVE. The gate is narrow: ordinary artifacts are ignored.
+      // A mismatch must repair the summary, never the evidence rows.
+      if (event === "FORMAT" && patch.formatted) {
+        assertLedgerConsistency(patch.formatted)
+      }
+      if (event === "SAVE") {
+        const current = await this.machine.snapshot()
+        const artifact = patch.formatted ?? current.latent.formatted ?? current.latent.decoded
+        if (artifact) assertLedgerConsistency(artifact)
+      }
+
       const state = await this.machine.transition(event, patch, actor)
       await this.storage.saveState(state)
       return this.envelope(state)

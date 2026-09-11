@@ -74,8 +74,40 @@ test('stable V1 mock executes skill-routed develop lifecycle end to end', async 
     env=j(await t.dmt_skill_event.execute({action:'complete',id:'make-an-opencode-plugin',reason:'host contracts verified'}))
     assert.equal(env.state.skills.active,undefined)
     assert.equal(env.state.skills.history.at(-1).status,'completed')
-    await t.dmt_transition.execute({event:'DECODE',patch_json:JSON.stringify({decoded:'# Result\n\nVerified.\n'})})
-    await t.dmt_transition.execute({event:'FORMAT'})
+    const ledgerBad = `# Result
+
+## Classification summary
+
+| status | count |
+|---|---:|
+| complete | 1 |
+| partial | 0 |
+| blocked | 0 |
+| not_started | 0 |
+| unknown | 0 |
+
+Counts: 1 items.
+
+## Evidence table
+
+| # | item | status | evidence |
+|---|---|---|---|
+| 1 | implementation | complete | source observed |
+| 2 | verification | complete | mock host green |
+`
+    const ledgerGood = ledgerBad
+      .replace('| complete | 1 |', '| complete | 2 |')
+      .replace('Counts: 1 items.', 'Counts: 2 items.')
+
+    await t.dmt_transition.execute({event:'DECODE',patch_json:JSON.stringify({decoded:ledgerBad})})
+    await assert.rejects(
+      ()=>t.dmt_transition.execute({event:'FORMAT'}),
+      /ledger consistency gate:.*complete: declared 1, observed 2/
+    )
+    env=j(await t.dmt_state.execute({}))
+    assert.equal(env.state.phase,'decoded')
+
+    await t.dmt_transition.execute({event:'FORMAT',patch_json:JSON.stringify({decoded:ledgerGood})})
     env=j(await t.dmt_transition.execute({event:'SAVE'}))
     assert.equal(env.state.phase,'saved')
 

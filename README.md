@@ -329,6 +329,33 @@ dmt_sync
 
 Only one skill may be active in canonical state at a time.
 
+### Ledger self-consistency gate
+
+Build ledgers have a small mechanical pre-save check. When an artifact contains both a
+`Classification summary` table and an `Evidence table`, D.M.T. recomputes
+`complete`, `partial`, `blocked`, `not_started`, and `unknown` counts from the evidence
+rows and compares them with the declared summary.
+
+```text
+evidence table rows
+        ↓
+recompute status counts
+        ↓
+compare declared summary
+   ┌────┴────┐
+ PASS      FAIL
+   │          │
+FORMAT/SAVE   └─> repair summary only, then retry
+```
+
+The gate deliberately does **not** judge whether a completion claim is true. Evidence
+quality remains a verification problem. Its job is narrower: catch arithmetic and
+bookkeeping drift cheaply before persistence.
+
+D.M.T. also keeps observed failures intact when later evidence changes the
+interpretation: a failure under load followed by an isolated pass means the regression
+is **not established**; it does not mean the original failure never happened.
+
 ## Mutation strength and code inpainting
 
 | Strength | Meaning |
